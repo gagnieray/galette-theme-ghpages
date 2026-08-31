@@ -11,6 +11,15 @@ the repository and at galette.eu.
 {%- unless home_page -%}
   {%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', default_lang | first -%}
 {%- endunless -%}
+{%- comment -%}
+A site that has not adopted `ref` yet — a bare README.md rendered as the index,
+say — still deserves a Home entry, so fall back on the site root.
+{%- endcomment -%}
+{%- if home_page -%}
+  {%- assign home_url = home_page.url | relative_url -%}
+{%- else -%}
+  {%- assign home_url = '/' | relative_url -%}
+{%- endif -%}
 {%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', cur_lang | first -%}
 {%- unless doc_page -%}
   {%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', default_lang | first -%}
@@ -33,9 +42,7 @@ the repository and at galette.eu.
         </span>
       </a>
       <ul>
-        {%- if home_page %}
-        <li{% if page.ref == 'home' %} class="active"{% endif %}><a href="{{ home_page.url | relative_url }}">{{ t_nav_home }}</a></li>
-        {%- endif %}
+        <li{% if page.ref == 'home' %} class="active"{% endif %}><a href="{{ home_url }}">{{ t_nav_home }}</a></li>
         {%- if doc_page %}
         <li{% if page.ref == 'doc' %} class="active"{% endif %}><a href="{{ doc_page.url | relative_url }}">{{ t_nav_doc }}</a></li>
         {%- endif %}
