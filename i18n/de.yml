@@ -19,3 +19,4 @@ t_galette_website: Galette-Webseite
 t_galette_doc: Galette-Dokumentation
 t_latest: neueste
 t_requires: Benötigt Galette %s oder neuer.
+t_languages: Sprachen

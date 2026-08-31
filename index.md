@@ -110,9 +110,11 @@ fr/index.md           -> /fr/            lang: fr   ref: home
 fr/documentation.md   -> /fr/documentation  lang: fr  ref: doc
 ```
 
-Pages sharing a `ref` are offered to each other in the language selector, and
-the menu keeps the reader inside their language. Declare one `defaults`
-entry per language you publish:
+Pages sharing a `ref` are offered to each other in the language picker — a
+`<details>` disclosure showing the current language and folding the others away,
+so it works with the keyboard and without JavaScript — and the menu keeps the
+reader inside their language. Declare one `defaults` entry per language you
+publish:
 
 ```yaml
 defaults:

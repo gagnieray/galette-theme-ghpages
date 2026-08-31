@@ -111,11 +111,17 @@ fr/index.md            -> /fr/                    lang: fr   ref: home
 fr/documentation.md    -> /fr/documentation.html  lang: fr   ref: doc
 ```
 
-Pages sharing a `ref` appear in each other's language selector, and the menu
-keeps the reader inside their language, falling back to `default_lang` when a
-page has no translation. Add one `defaults` entry per published language, and
-never set `permalink` on a translated page — the URL comes from the path, so two
-languages cannot collide.
+Pages sharing a `ref` appear in each other's language picker, and the menu keeps
+the reader inside their language, falling back to `default_lang` when a page has
+no translation. Add one `defaults` entry per published language, and never set
+`permalink` on a translated page — the URL comes from the path, so two languages
+cannot collide.
+
+The picker is a `<details>` disclosure: it shows the current language and folds
+the others away, which a flat list of nineteen could not do. Being native HTML
+it opens with the keyboard and works with JavaScript disabled; the theme's script
+only adds dismissing it with Escape or a click elsewhere. It appears only when
+the page actually has a translation.
 
 ### Wide content
 

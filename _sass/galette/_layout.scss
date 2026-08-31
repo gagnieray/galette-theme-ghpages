@@ -149,30 +149,99 @@ section#content {
     padding-inline-start: .5em;
 }
 
-/** Language selector */
-.langselector {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: .2em;
+/** Language picker: a `<details>` disclosure, so it needs no JavaScript to
+    open. Nineteen languages would not fit as a flat list. */
+.langpicker {
+    position: relative;
+    font-size: $small-font-size;
+
+    summary {
+        display: inline-flex;
+        align-items: center;
+        gap: .35em;
+        padding: .25em .5em;
+        border: 1px solid $galette-light-grey;
+        border-radius: 4px;
+        color: $text-color;
+        cursor: pointer;
+        list-style: none;          /* Firefox marker */
+
+        &::-webkit-details-marker { /* Safari, older Chrome */
+            display: none;
+        }
+
+        &:hover {
+            border-color: $galette-grey;
+            color: $galette-dark-grey;
+        }
+
+        /* The disclosure is reachable with the keyboard on its own; it just has
+           to show it. */
+        &:focus-visible {
+            outline: 2px solid $galette-blue;
+            outline-offset: 2px;
+        }
+    }
+
+    .langpicker-globe {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
+    .langpicker-chevron {
+        width: 11px;
+        height: 11px;
+        flex-shrink: 0;
+        transition: transform .12s ease;
+    }
+
+    &[open] .langpicker-chevron {
+        transform: rotate(180deg);
+    }
+
+    ul {
+        position: absolute;
+        z-index: 20;
+        margin: .25em 0 0;
+        padding: .25em 0;
+        list-style: none;
+        min-width: 100%;
+        max-height: 60vh;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid $galette-light-grey;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+        /* Aligned on the edge the text runs towards, so right-to-left works. */
+        inset-inline-start: 0;
+    }
+
+    li {
+        margin: 0;
+    }
 
     a {
         display: block;
-        padding: .15em .35em;
+        white-space: nowrap;
+        padding: .3em .8em;
         color: $text-color;
+        text-decoration: none;
 
-        &:hover {
+        &:hover, &:focus {
             text-decoration: none;
             color: $light-text-color;
             background: $galette-blue;
         }
     }
+}
 
-    .current {
-        padding: .15em .35em;
-        font-weight: 700;
-        color: $galette-dark-grey;
-        border-bottom: 1px solid $galette-orange;
+@media screen and (min-width: $galette-large) {
+    /* In the header column the picker hangs off the far edge, so the panel
+       opens towards the inside of the page rather than off it. */
+    .langpicker ul {
+        inset-inline-start: auto;
+        inset-inline-end: 0;
     }
 }
 

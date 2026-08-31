@@ -25,4 +25,22 @@
     mark();
     window.addEventListener('resize', mark);
   })();
+
+  /* The language picker is a <details>, so it already opens, closes and takes
+     the keyboard on its own. This only adds what <details> does not do:
+     dismissing it with Escape or a click elsewhere. */
+  (function () {
+    var picker = document.querySelector('.langpicker');
+    if (!picker) return;
+    document.addEventListener('click', function (event) {
+      if (picker.open && !picker.contains(event.target)) picker.open = false;
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && picker.open) {
+        picker.open = false;
+        var summary = picker.querySelector('summary');
+        if (summary) summary.focus();
+      }
+    });
+  })();
 </script>

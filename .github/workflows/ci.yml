@@ -50,8 +50,10 @@ jobs:
           grep -q 'maintainer-core' _site/index.html
           grep -q 'id="galette"' _site/index.html
 
-      - name: Check the language selector links the translated page
-        run: grep -q 'hreflang="fr"' _site/demo.html
+      - name: Check the language picker links the translated page
+        run: |
+          grep -q 'details class="langpicker"' _site/demo.html
+          grep -q 'hreflang="fr"' _site/demo.html
 
       - name: Check right-to-left support is wired
         run: grep -q 'bg-rtl.png' _site/assets/css/style.css

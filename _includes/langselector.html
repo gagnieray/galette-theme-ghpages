@@ -1,7 +1,13 @@
 {%- comment -%}
-Lists every translation of the current page. Pages of a same logical page share
-a `ref` and differ by their `lang`, which the consuming site sets through
-path-scoped `defaults` — so Weblate never has to write that key itself.
+The language picker: a `<details>` disclosure showing the current language and
+folding the others away. Native HTML, so it opens with the keyboard and works
+with JavaScript disabled; scripts.html only adds closing on Escape or an outside
+click. With nineteen languages in the project, a flat inline list would take the
+whole header.
+
+Pages of a same logical page share a `ref` and differ by their `lang`, which the
+consuming site sets through path-scoped `defaults` — so Weblate never has to
+write that key itself.
 
 Two guards, both learned from a real site: a page without `ref` has no
 translations by definition, and `where: 'ref', nil` would otherwise match every
@@ -21,22 +27,31 @@ it, which is what a README.md rendered as the index alongside an index.md does.
   {%- endfor -%}
   {%- assign distinct_count = distinct | split: '||' | size -%}
   {%- if distinct_count > 1 -%}
-<nav class="langselector" aria-label="Languages">
-    {%- assign emitted = '' -%}
-    {%- for sibling in siblings -%}
-      {%- assign sib_lang = sibling.lang | default: 'en' -%}
-      {%- assign marker = '|' | append: sib_lang | append: '|' -%}
-      {%- unless emitted contains marker -%}
-        {%- assign emitted = emitted | append: marker -%}
-        {%- assign sib_html_lang = sib_lang | replace: '_', '-' -%}
-        {%- include lang-name.html lang=sib_lang -%}
-        {%- if sib_lang == cur_lang -%}
-          <span class="current" lang="{{ sib_html_lang }}">{{ lang_name }}</span>
-        {%- else -%}
-          <a href="{{ sibling.url | relative_url }}" lang="{{ sib_html_lang }}" hreflang="{{ sib_html_lang }}">{{ lang_name }}</a>
-        {%- endif -%}
-      {%- endunless -%}
-    {%- endfor -%}
+    {%- include lang-name.html lang=cur_lang -%}
+    {%- assign current_name = lang_name -%}
+<nav class="langselector" aria-label="{{ t_languages }}">
+  <details class="langpicker">
+    <summary>
+      <svg class="langpicker-globe" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4"/><path d="M12 2.8a14 14 0 0 1 0 18.4a14 14 0 0 1 0-18.4"/></svg>
+      <span class="langpicker-current">{{ current_name }}</span>
+      <svg class="langpicker-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 9.2 12 15.4l6.5-6.2"/></svg>
+    </summary>
+    <ul>
+      {%- assign emitted = '' -%}
+      {%- for sibling in siblings -%}
+        {%- assign sib_lang = sibling.lang | default: 'en' -%}
+        {%- assign marker = '|' | append: sib_lang | append: '|' -%}
+        {%- unless emitted contains marker -%}
+          {%- assign emitted = emitted | append: marker -%}
+          {%- unless sib_lang == cur_lang -%}
+            {%- assign sib_html_lang = sib_lang | replace: '_', '-' -%}
+            {%- include lang-name.html lang=sib_lang -%}
+      <li><a href="{{ sibling.url | relative_url }}" lang="{{ sib_html_lang }}" hreflang="{{ sib_html_lang }}">{{ lang_name }}</a></li>
+          {%- endunless -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    </ul>
+  </details>
 </nav>
   {%- endif -%}
 {%- endif -%}
