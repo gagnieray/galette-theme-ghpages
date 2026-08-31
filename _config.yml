@@ -1,0 +1,28 @@
+# This file configures the theme's own demo site, published at
+# https://galette.github.io/theme-ghpages/ — it is NOT inherited by the sites
+# using the theme: Jekyll only shares _layouts, _includes, _sass and assets
+# through `remote_theme`. Every key below is one a consuming site sets itself.
+title: Galette Theme
+description: GitHub Pages theme for Galette plugins
+author: Johan Cwiklinski
+maintainer: core
+
+plugin:
+  archive: galette-plugin-example
+  min_galette: "1.3.0"
+
+# Demo pages live in demo/, one directory per language, so the language
+# selector and the per-language navigation are exercised locally.
+defaults:
+  - scope: {path: ""}
+    values: {layout: default, lang: en}
+  - scope: {path: "fr"}
+    values: {lang: fr}
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - README.md
+  - LICENSE
+  - LICENSE.contents

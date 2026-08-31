@@ -1,0 +1,262 @@
+/**
+# This file is part of Galette.
+#
+# Galette is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Galette is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Galette.  If not, see https://www.gnu.org/licenses/
+*/
+
+/** Galette logo band, identical to galette.eu */
+$galette-header-h: 100px !default;
+
+body > header:first-child {
+    position: relative;
+    height: $galette-header-h;
+    width: auto;
+    padding: 0;
+    margin: 0 auto;
+
+    .logo-header {
+        width: 100%;
+        text-align: center;
+        margin: 0;
+
+        a {
+            color: $light-text-color;
+            text-decoration: none;
+            display: inline-block;
+            width: 208px;
+            height: $galette-header-h;
+            background: url(#{$assets-path}/images/galette.png) top left no-repeat;
+            /* No text-indent here, unlike galette.eu: the label is already
+               hidden by .sr-only, and indenting it pushed the page 30px wide
+               on a 360px screen. */
+        }
+    }
+}
+
+/** Page contents */
+main.wrapper {
+    max-width: $galette-max-width;
+    margin: 0 auto;
+    background: #fff;
+    padding: 2em;
+
+    > header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1em;
+
+        .header-title {
+            h1 {
+                display: inline-block;
+                border-bottom: 1px solid $galette-orange;
+                line-height: 1.2em;
+                margin: .1em 0;
+            }
+
+            .tagline {
+                margin: .3em 0 0;
+                color: $galette-grey;
+                font-size: $big-font-size;
+            }
+        }
+    }
+}
+
+section#content {
+    margin-top: 1.5em;
+}
+
+/** Plugin navigation, borrowed from the galette.eu orange bar */
+nav.plugin-nav {
+    margin: 1.2em 0 0;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: $galette-orange;
+        border-radius: 5px;
+        box-shadow: inset rgba(#fff, 0.45) 0 1px 0, inset rgba(#000, 0.2) 0 -1px 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    li {
+        flex: 1;
+        border-right: 1px solid $galette-dark-orange;
+        border-left: 1px solid $galette-light-orange;
+
+        &:hover {
+            background-color: $galette-dark-orange;
+        }
+
+        &:first-child {
+            border-left: none;
+            border-radius: 5px 0 0 5px;
+        }
+
+        &:last-child {
+            border-right: none;
+            border-radius: 0 5px 5px 0;
+        }
+
+        &.current {
+            background-color: $galette-dark-orange;
+        }
+    }
+
+    a {
+        white-space: nowrap;
+        color: $galette-dark-grey;
+        display: block;
+        text-align: center;
+        font-weight: 700;
+        padding: .5em 1.3em;
+        text-decoration: none;
+    }
+}
+
+/** Maintainer pill */
+.maintainer {
+    display: inline-flex;
+    align-items: center;
+    gap: .4em;
+    font-size: $small-font-size;
+    font-weight: 700;
+    padding: .3em .7em;
+    border-radius: 999px;
+    white-space: nowrap;
+
+    /* Galette orange never carries text on white: it stays a background here,
+       with the dark grey on top, which keeps the contrast ratio comfortable. */
+    &.maintainer-core {
+        background: $galette-orange;
+        color: $galette-dark-grey;
+        border: 1px solid $galette-dark-orange;
+    }
+
+    &.maintainer-community {
+        background: $galette-light-grey;
+        color: $galette-dark-grey;
+        border: 1px solid darken($galette-light-grey, 15%);
+    }
+}
+
+/** Language selector */
+.langselector {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .2em;
+
+    a {
+        display: block;
+        padding: .15em .35em;
+        color: $text-color;
+
+        &:hover {
+            text-decoration: none;
+            color: $light-text-color;
+            background: $galette-blue;
+        }
+    }
+
+    .current {
+        padding: .15em .35em;
+        font-weight: 700;
+        color: $galette-dark-grey;
+        border-bottom: 1px solid $galette-orange;
+    }
+}
+
+.header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .5em;
+}
+
+/** main footer */
+footer.site-footer {
+    color: $light-text-color;
+    margin: 1em 0 .5em;
+    clear: both;
+    text-align: center;
+
+    a {
+        color: $light-text-color;
+        padding: .1em;
+
+        &:hover {
+            text-decoration: underline;
+            color: $light-text-color;
+        }
+    }
+
+    nav a:hover {
+        text-decoration: none;
+    }
+
+    .footer-line {
+        margin: .3em 0;
+    }
+}
+
+@media screen and (min-width: $galette-large) {
+    main.wrapper {
+        border-radius: 6px;
+    }
+
+    body > header:first-child > .logo-header {
+        padding-top: .6em;
+        position: relative;
+        z-index: 1;
+    }
+}
+
+@media screen and (max-width: $galette-large) {
+    main.wrapper {
+        padding: 1em;
+    }
+
+    main.wrapper > header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-meta {
+        align-items: flex-start;
+    }
+
+    nav.plugin-nav ul {
+        flex-direction: column;
+    }
+
+    nav.plugin-nav li {
+        border-left: none;
+        border-right: none;
+        border-top: 1px solid $galette-light-orange;
+
+        &:first-child {
+            border-top: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        &:last-child {
+            border-radius: 0 0 5px 5px;
+        }
+    }
+}

@@ -1,0 +1,49 @@
+/**
+# This file is part of Galette.
+#
+# Galette is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Galette is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Galette.  If not, see https://www.gnu.org/licenses/
+*/
+
+// Kept in sync with galette/website assets/sass/_variables.scss.
+// Note: no `@use` here, GitHub Pages builds with Ruby Sass 3 which does not support it.
+
+$base-font-family:  PtSans, Arial, sans-serif !default;
+$base-font-size:    14px !default;
+$base-font-weight:  400 !default;
+$small-font-size:   $base-font-size * 0.875 !default;
+$big-font-size:     $base-font-size * 1.125 !default;
+$base-line-height:  1.4em !default;
+
+$galette-orange:       #ffb619 !default;
+$galette-light-orange: lighten($galette-orange, 20%) !default;
+$galette-dark-orange:  darken($galette-orange, 10%) !default;
+$galette-grey:         #636B70 !default;
+$galette-light-grey:   #e5e5e5 !default;
+$galette-dark-grey:    #242424 !default;
+$galette-blue:         #007baa !default;
+$galette-dark-blue:    darken($galette-blue, 10%) !default;
+
+$text-color:        #606060 !default;
+$light-text-color:  #fff !default;
+$dark-text-color:   $galette-dark-grey !default;
+$background-color:  $galette-grey !default;
+$action-color:      $galette-blue !default;
+
+$galette-max-width: 1024px !default;
+
+$galette-large:      767px !default;
+
+// Assets are referenced relatively to the compiled stylesheet
+// (/assets/css/style.css), so that any `baseurl` works untouched.
+$assets-path:        ".." !default;

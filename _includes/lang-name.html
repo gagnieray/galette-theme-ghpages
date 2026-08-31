@@ -1,0 +1,17 @@
+{%- comment -%}
+Resolves a language code to its native name, and assigns it to `lang_name`.
+Usage: {% include lang-name.html lang=some_lang %}
+{%- endcomment -%}
+{%- case include.lang -%}
+{%- when 'en' -%}{%- assign lang_name = "English" -%}
+{%- when 'fr' -%}{%- assign lang_name = "Français" -%}
+{%- when 'de' -%}{%- assign lang_name = "Deutsch" -%}
+{%- when 'es' -%}{%- assign lang_name = "Español" -%}
+{%- when 'it' -%}{%- assign lang_name = "Italiano" -%}
+{%- when 'pt' -%}{%- assign lang_name = "Português" -%}
+{%- when 'pt_BR' -%}{%- assign lang_name = "Português do Brasil" -%}
+{%- when 'sl' -%}{%- assign lang_name = "Slovenščina" -%}
+{%- when 'uk' -%}{%- assign lang_name = "Українська" -%}
+{%- when 'ta' -%}{%- assign lang_name = "தமிழ்" -%}
+{%- else -%}{%- assign lang_name = include.lang -%}
+{%- endcase -%}

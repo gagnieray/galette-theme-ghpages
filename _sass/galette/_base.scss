@@ -1,0 +1,205 @@
+/**
+# This file is part of Galette.
+#
+# Galette is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Galette is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Galette.  If not, see https://www.gnu.org/licenses/
+*/
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: $background-color url(#{$assets-path}/images/bg.png) top left no-repeat;
+
+    font: $base-font-weight #{$base-font-size}/#{$base-line-height} $base-font-family;
+    color: $text-color;
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+}
+
+a {
+    color: $action-color;
+    text-decoration: none;
+
+    &:hover, &:active, &:focus {
+        color: $galette-dark-blue;
+        text-decoration: underline;
+    }
+
+    img {
+        border: none;
+    }
+}
+
+img {
+    max-width: 100%;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: $galette-light-grey;
+    margin: 2em 0;
+}
+
+/** Content typography */
+section#content {
+    h2, h3, h4, h5, h6 {
+        border-bottom: 1px dotted $galette-blue;
+        /* The underline must hug the text, but a plugin documentation does put
+           two headings in a row — so shrink-to-fit as a block, not inline. */
+        display: block;
+        width: -moz-fit-content;
+        width: fit-content;
+        max-width: 100%;
+
+        a {
+            color: $text-color;
+
+            &:hover {
+                color: black;
+                text-decoration: none;
+            }
+        }
+    }
+
+    p {
+        text-align: justify;
+    }
+
+    a {
+        text-decoration: underline;
+    }
+
+    ul, ol {
+        padding-left: 1.4em;
+    }
+
+    li > p {
+        margin: .2em 0;
+    }
+
+    blockquote {
+        margin: 1.5em 0;
+        padding: .5em 1em;
+        border-left: 4px solid $galette-orange;
+        background: #fcfcfc;
+        color: $galette-dark-grey;
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    /** Wide content must scroll inside its own container, never the page.
+        The theme's inline script makes such a container keyboard-reachable,
+        so it needs a visible focus ring. */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .table-wrapper:focus,
+    pre:focus {
+        outline: 2px solid $galette-blue;
+        outline-offset: 2px;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 1.5em 0;
+
+        th, td {
+            border: 1px solid $galette-light-grey;
+            padding: .4em .6em;
+            text-align: left;
+        }
+
+        th {
+            background: $galette-light-grey;
+            color: $dark-text-color;
+        }
+
+        tr:nth-child(even) td {
+            background: #f9f9f9;
+        }
+    }
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+code, kbd, samp {
+    font-size: $small-font-size;
+    background: $galette-light-grey;
+    padding: .1em .2em;
+}
+
+section#content pre {
+    padding: 1em;
+    font: 1em 'courier new', courier, monospace;
+    border: 1px dashed $galette-grey;
+    color: $galette-dark-grey;
+    overflow: auto;
+    background-color: #fdffc3;
+
+    code {
+        background: none;
+        padding: 0;
+        font-size: inherit;
+    }
+}
+
+/** Download badges, as used on galette.eu */
+.download-badge {
+    text-align: center;
+    margin: 1.5em auto;
+
+    a:hover {
+        text-decoration: none;
+    }
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.social-media-list a {
+    margin: 0 .5em;
+}
+
+.social-media-list svg {
+    width: 20px;
+    height: 18px;
+    vertical-align: middle;
+    padding-right: .2em;
+    fill: $galette-light-grey;
+
+    &:hover {
+        fill: $light-text-color;
+    }
+}

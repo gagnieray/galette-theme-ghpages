@@ -1,0 +1,28 @@
+<script>
+  /* Any container that ends up scrolling horizontally — a wide table wrapped in
+     .table-wrapper, a long code block — must be reachable with the keyboard,
+     otherwise its content is unreadable without a mouse (WCAG 2.1.1). Authors
+     write plain Markdown, so the theme applies it here rather than asking every
+     plugin to remember a tabindex. */
+  (function () {
+    var label = {{ t_scroll_label | default: 'Scrollable content' | jsonify }};
+    function mark() {
+      var nodes = document.querySelectorAll('#content .table-wrapper, #content pre');
+      for (var i = 0; i < nodes.length; i++) {
+        var el = nodes[i];
+        var scrolls = el.scrollWidth > el.clientWidth;
+        if (scrolls && !el.hasAttribute('tabindex')) {
+          el.setAttribute('tabindex', '0');
+          el.setAttribute('role', 'region');
+          el.setAttribute('aria-label', label);
+        } else if (!scrolls && el.getAttribute('role') === 'region') {
+          el.removeAttribute('tabindex');
+          el.removeAttribute('role');
+          el.removeAttribute('aria-label');
+        }
+      }
+    }
+    mark();
+    window.addEventListener('resize', mark);
+  })();
+</script>

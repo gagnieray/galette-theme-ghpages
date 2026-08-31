@@ -1,0 +1,19 @@
+{%- assign icons = '/assets/images/social-icons.svg' | relative_url -%}
+<nav class="social-media-list" aria-label="Galette on the web">
+  <a href="https://github.com/{{ site.github.owner_name | default: 'galette-plugins' }}" title="GitHub">
+    <svg class="svg-icon" aria-hidden="true"><use xlink:href="{{ icons }}#github"></use></svg>
+    <span class="sr-only">GitHub</span>
+  </a>
+  <a href="https://framapiaf.org/@galette" title="Mastodon">
+    <svg class="svg-icon" aria-hidden="true"><use xlink:href="{{ icons }}#mastodon"></use></svg>
+    <span class="sr-only">Mastodon</span>
+  </a>
+  <a href="https://matrix.to/#/%23galette:matrix.org" title="Matrix">
+    <svg class="svg-icon" aria-hidden="true"><use xlink:href="{{ icons }}#matrix"></use></svg>
+    <span class="sr-only">Matrix</span>
+  </a>
+  <a href="https://discord.gg/98g2e3xka8" title="Discord">
+    <svg class="svg-icon" aria-hidden="true"><use xlink:href="{{ icons }}#discord"></use></svg>
+    <span class="sr-only">Discord</span>
+  </a>
+</nav>

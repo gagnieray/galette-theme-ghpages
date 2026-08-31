@@ -1,0 +1,16 @@
+{%- comment -%}
+Renders the maintainer pill. Driven by `maintainer:` in the site _config.yml:
+  core       -> maintained by the Galette team
+  community  -> maintained by a community member (default)
+Expects the strings from i18n.html to be in scope.
+{%- endcomment -%}
+{%- if site.maintainer == 'core' -%}
+  <span class="maintainer maintainer-core" title="{{ t_maint_core_footer }}">
+    <svg class="svg-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .5l2.06 4.5 4.94.6-3.6 3.4.9 4.9L8 11.6l-4.3 2.3.9-4.9L1 5.6l4.94-.6L8 .5z"/></svg>
+    {{ t_maint_core }}
+  </span>
+{%- else -%}
+  <span class="maintainer maintainer-community" title="{{ t_maint_community_footer }}">
+    {{ t_maint_community }}
+  </span>
+{%- endif -%}

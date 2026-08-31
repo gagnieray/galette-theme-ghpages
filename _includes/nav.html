@@ -1,0 +1,34 @@
+{%- comment -%}
+Plugin navigation. Home and Documentation stay inside the current language, and
+fall back on the site's default language — `default_lang`, English unless the
+site says otherwise — when the page has no translation. Falling back on the
+first matching page instead would pick whichever language Jekyll happened to
+list first.
+
+Download and Source code are derived from the repository itself.
+{%- endcomment -%}
+{%- assign default_lang = site.default_lang | default: 'en' -%}
+{%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', cur_lang | first -%}
+{%- unless home_page -%}
+  {%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', default_lang | first -%}
+{%- endunless -%}
+{%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', cur_lang | first -%}
+{%- unless doc_page -%}
+  {%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', default_lang | first -%}
+{%- endunless -%}
+<nav class="plugin-nav" aria-label="{{ site.title }}">
+  <ul>
+    {%- if home_page %}
+    <li{% if page.ref == 'home' %} class="current"{% endif %}><a href="{{ home_page.url | relative_url }}">{{ t_nav_home }}</a></li>
+    {%- endif %}
+    {%- if doc_page %}
+    <li{% if page.ref == 'doc' %} class="current"{% endif %}><a href="{{ doc_page.url | relative_url }}">{{ t_nav_doc }}</a></li>
+    {%- endif %}
+    {%- if site.github.releases_url %}
+    <li><a href="{{ site.github.releases_url }}">{{ t_nav_download }}</a></li>
+    {%- endif %}
+    {%- if site.github.repository_url %}
+    <li><a href="{{ site.github.repository_url }}">{{ t_nav_source }}</a></li>
+    {%- endif %}
+  </ul>
+</nav>

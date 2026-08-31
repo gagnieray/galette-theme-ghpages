@@ -1,0 +1,20 @@
+{%- comment -%}
+Lists every translation of the current page. Pages of a same logical page share
+a `ref` and differ by their `lang`, which the consuming site sets through
+path-scoped `defaults` — so Weblate never has to write that key itself.
+{%- endcomment -%}
+{%- assign siblings = site.pages | where: 'ref', page.ref | sort: 'lang' -%}
+{%- if siblings.size > 1 -%}
+<nav class="langselector" aria-label="Languages">
+  {%- for sibling in siblings -%}
+    {%- assign sib_lang = sibling.lang | default: 'en' -%}
+    {%- assign sib_html_lang = sib_lang | replace: '_', '-' -%}
+    {%- include lang-name.html lang=sib_lang -%}
+    {%- if sib_lang == cur_lang -%}
+      <span class="current" lang="{{ sib_html_lang }}">{{ lang_name }}</span>
+    {%- else -%}
+      <a href="{{ sibling.url | relative_url }}" lang="{{ sib_html_lang }}" hreflang="{{ sib_html_lang }}">{{ lang_name }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+</nav>
+{%- endif -%}

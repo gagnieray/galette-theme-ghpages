@@ -1,0 +1,62 @@
+/**
+# This file is part of Galette.
+#
+# Galette is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Galette is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Galette.  If not, see https://www.gnu.org/licenses/
+*/
+
+@charset "utf-8";
+
+// `@import` and not `@use`: GitHub Pages builds with Ruby Sass 3.
+@import "galette/variables";
+@import "galette/normalize";
+@import "galette/base";
+@import "galette/layout";
+
+// Fonts are resolved relatively to the compiled stylesheet, so the theme works
+// under any `baseurl` (`/plugin-fullcard` on project pages, `/` elsewhere).
+@font-face {
+    font-family: 'PtSans';
+    src: url('#{$assets-path}/fonts/ptsans-regular-webfont.woff2') format('woff2'),
+         url('#{$assets-path}/fonts/ptsans-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PtSans';
+    src: url('#{$assets-path}/fonts/ptsans-bold-webfont.woff2') format('woff2'),
+         url('#{$assets-path}/fonts/ptsans-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PtSans';
+    src: url('#{$assets-path}/fonts/ptsans-italic-webfont.woff2') format('woff2'),
+         url('#{$assets-path}/fonts/ptsans-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PtSans';
+    src: url('#{$assets-path}/fonts/ptsans-bolditalic-webfont.woff2') format('woff2'),
+         url('#{$assets-path}/fonts/ptsans-bolditalic-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}

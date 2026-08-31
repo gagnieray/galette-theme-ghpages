@@ -1,0 +1,166 @@
+{%- comment -%}
+Interface strings of the theme.
+
+They live here and not in `_data/`: Jekyll themes only share `_layouts`,
+`_includes`, `_sass` and `assets`, so a `_data/i18n.yml` would be invisible to
+the sites consuming this theme through `remote_theme`.
+
+`cur_lang` comes from the page `lang` variable, which consuming sites set with
+path-scoped `defaults` in their _config.yml. Unknown languages fall back on
+English. Adding a language means adding a `when` here and in lang-name.html.
+
+Liquid includes share the caller's scope, so every variable assigned below is
+usable in the layout right after `{% include i18n.html %}`.
+{%- endcomment -%}
+{%- assign cur_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- comment -%}
+Directory and Weblate codes use an underscore (pt_BR); HTML lang and
+hreflang need the BCP 47 form (pt-BR), or the markup is invalid.
+{%- endcomment -%}
+{%- assign cur_html_lang = cur_lang | replace: '_', '-' -%}
+{%- case cur_lang -%}
+{%- when 'en' -%}
+  {%- assign t_nav_home = "Home" -%}
+  {%- assign t_nav_doc = "Documentation" -%}
+  {%- assign t_nav_download = "Download" -%}
+  {%- assign t_nav_source = "Source code" -%}
+  {%- assign t_maint_core = "Maintained by the Galette team" -%}
+  {%- assign t_maint_community = "Community plugin" -%}
+  {%- assign t_maint_core_footer = "This plugin is developed and maintained by the Galette team." -%}
+  {%- assign t_maint_community_footer = "This plugin is developed and maintained by a community member." -%}
+  {%- assign t_contact = "Get in touch" -%}
+  {%- assign t_code_license = "Code under GPLv3" -%}
+  {%- assign t_content_license = "Contents under CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Scrollable content" -%}
+{%- when 'fr' -%}
+  {%- assign t_nav_home = "Accueil" -%}
+  {%- assign t_nav_doc = "Documentation" -%}
+  {%- assign t_nav_download = "Téléchargement" -%}
+  {%- assign t_nav_source = "Code source" -%}
+  {%- assign t_maint_core = "Maintenu par l’équipe Galette" -%}
+  {%- assign t_maint_community = "Plugin communautaire" -%}
+  {%- assign t_maint_core_footer = "Ce plugin est développé et maintenu par l’équipe Galette." -%}
+  {%- assign t_maint_community_footer = "Ce plugin est développé et maintenu par un membre de la communauté." -%}
+  {%- assign t_contact = "Restons en contact" -%}
+  {%- assign t_code_license = "Code sous GPLv3" -%}
+  {%- assign t_content_license = "Contenus sous CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Contenu défilant" -%}
+{%- when 'de' -%}
+  {%- assign t_nav_home = "Startseite" -%}
+  {%- assign t_nav_doc = "Dokumentation" -%}
+  {%- assign t_nav_download = "Download" -%}
+  {%- assign t_nav_source = "Quellcode" -%}
+  {%- assign t_maint_core = "Vom Galette-Team betreut" -%}
+  {%- assign t_maint_community = "Community-Plugin" -%}
+  {%- assign t_maint_core_footer = "Dieses Plugin wird vom Galette-Team entwickelt und betreut." -%}
+  {%- assign t_maint_community_footer = "Dieses Plugin wird von einem Community-Mitglied entwickelt und betreut." -%}
+  {%- assign t_contact = "Kontakt aufnehmen" -%}
+  {%- assign t_code_license = "Code unter GPLv3" -%}
+  {%- assign t_content_license = "Inhalte unter CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Scrollbarer Inhalt" -%}
+{%- when 'es' -%}
+  {%- assign t_nav_home = "Inicio" -%}
+  {%- assign t_nav_doc = "Documentación" -%}
+  {%- assign t_nav_download = "Descarga" -%}
+  {%- assign t_nav_source = "Código fuente" -%}
+  {%- assign t_maint_core = "Mantenido por el equipo de Galette" -%}
+  {%- assign t_maint_community = "Plugin de la comunidad" -%}
+  {%- assign t_maint_core_footer = "Este plugin es desarrollado y mantenido por el equipo de Galette." -%}
+  {%- assign t_maint_community_footer = "Este plugin es desarrollado y mantenido por un miembro de la comunidad." -%}
+  {%- assign t_contact = "Contacta con nosotros" -%}
+  {%- assign t_code_license = "Código bajo GPLv3" -%}
+  {%- assign t_content_license = "Contenidos bajo CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Contenido desplazable" -%}
+{%- when 'it' -%}
+  {%- assign t_nav_home = "Home" -%}
+  {%- assign t_nav_doc = "Documentazione" -%}
+  {%- assign t_nav_download = "Scarica" -%}
+  {%- assign t_nav_source = "Codice sorgente" -%}
+  {%- assign t_maint_core = "Mantenuto dal team Galette" -%}
+  {%- assign t_maint_community = "Plugin della comunità" -%}
+  {%- assign t_maint_core_footer = "Questo plugin è sviluppato e mantenuto dal team Galette." -%}
+  {%- assign t_maint_community_footer = "Questo plugin è sviluppato e mantenuto da un membro della comunità." -%}
+  {%- assign t_contact = "Contattaci" -%}
+  {%- assign t_code_license = "Codice sotto GPLv3" -%}
+  {%- assign t_content_license = "Contenuti sotto CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Contenuto scorrevole" -%}
+{%- when 'pt' -%}
+  {%- assign t_nav_home = "Início" -%}
+  {%- assign t_nav_doc = "Documentação" -%}
+  {%- assign t_nav_download = "Descarregar" -%}
+  {%- assign t_nav_source = "Código-fonte" -%}
+  {%- assign t_maint_core = "Mantido pela equipa Galette" -%}
+  {%- assign t_maint_community = "Plugin da comunidade" -%}
+  {%- assign t_maint_core_footer = "Este plugin é desenvolvido e mantido pela equipa Galette." -%}
+  {%- assign t_maint_community_footer = "Este plugin é desenvolvido e mantido por um membro da comunidade." -%}
+  {%- assign t_contact = "Fale connosco" -%}
+  {%- assign t_code_license = "Código sob GPLv3" -%}
+  {%- assign t_content_license = "Conteúdos sob CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Conteúdo deslizável" -%}
+{%- when 'pt_BR' -%}
+  {%- assign t_nav_home = "Início" -%}
+  {%- assign t_nav_doc = "Documentação" -%}
+  {%- assign t_nav_download = "Baixar" -%}
+  {%- assign t_nav_source = "Código-fonte" -%}
+  {%- assign t_maint_core = "Mantido pela equipe Galette" -%}
+  {%- assign t_maint_community = "Plugin da comunidade" -%}
+  {%- assign t_maint_core_footer = "Este plugin é desenvolvido e mantido pela equipe Galette." -%}
+  {%- assign t_maint_community_footer = "Este plugin é desenvolvido e mantido por um membro da comunidade." -%}
+  {%- assign t_contact = "Fale com a gente" -%}
+  {%- assign t_code_license = "Código sob GPLv3" -%}
+  {%- assign t_content_license = "Conteúdos sob CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Conteúdo rolável" -%}
+{%- when 'sl' -%}
+  {%- assign t_nav_home = "Domov" -%}
+  {%- assign t_nav_doc = "Dokumentacija" -%}
+  {%- assign t_nav_download = "Prenos" -%}
+  {%- assign t_nav_source = "Izvorna koda" -%}
+  {%- assign t_maint_core = "Vzdržuje ekipa Galette" -%}
+  {%- assign t_maint_community = "Vtičnik skupnosti" -%}
+  {%- assign t_maint_core_footer = "Ta vtičnik razvija in vzdržuje ekipa Galette." -%}
+  {%- assign t_maint_community_footer = "Ta vtičnik razvija in vzdržuje član skupnosti." -%}
+  {%- assign t_contact = "Ostanimo v stiku" -%}
+  {%- assign t_code_license = "Koda pod GPLv3" -%}
+  {%- assign t_content_license = "Vsebina pod CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Drsljiva vsebina" -%}
+{%- when 'uk' -%}
+  {%- assign t_nav_home = "Головна" -%}
+  {%- assign t_nav_doc = "Документація" -%}
+  {%- assign t_nav_download = "Завантажити" -%}
+  {%- assign t_nav_source = "Початковий код" -%}
+  {%- assign t_maint_core = "Підтримується командою Galette" -%}
+  {%- assign t_maint_community = "Плагін спільноти" -%}
+  {%- assign t_maint_core_footer = "Цей плагін розробляє та підтримує команда Galette." -%}
+  {%- assign t_maint_community_footer = "Цей плагін розробляє та підтримує учасник спільноти." -%}
+  {%- assign t_contact = "Будьмо на зв’язку" -%}
+  {%- assign t_code_license = "Код під GPLv3" -%}
+  {%- assign t_content_license = "Вміст під CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Прокручуваний вміст" -%}
+{%- when 'ta' -%}
+  {%- assign t_nav_home = "முதற்பக்கம்" -%}
+  {%- assign t_nav_doc = "ஆவணமாக்கல்" -%}
+  {%- assign t_nav_download = "பதிவிறக்கம்" -%}
+  {%- assign t_nav_source = "மூலக் குறியீடு" -%}
+  {%- assign t_maint_core = "Galette குழுவால் பராமரிக்கப்படுகிறது" -%}
+  {%- assign t_maint_community = "சமூகச் செருகுநிரல்" -%}
+  {%- assign t_maint_core_footer = "இந்தச் செருகுநிரல் Galette குழுவால் உருவாக்கப்பட்டு பராமரிக்கப்படுகிறது." -%}
+  {%- assign t_maint_community_footer = "இந்தச் செருகுநிரல் சமூக உறுப்பினர் ஒருவரால் உருவாக்கப்பட்டு பராமரிக்கப்படுகிறது." -%}
+  {%- assign t_contact = "தொடர்பில் இருப்போம்" -%}
+  {%- assign t_code_license = "குறியீடு GPLv3 உரிமத்தில்" -%}
+  {%- assign t_content_license = "உள்ளடக்கம் CC BY-SA 4.0 உரிமத்தில்" -%}
+  {%- assign t_scroll_label = "உருள்கூடிய உள்ளடக்கம்" -%}
+{%- else -%}
+  {%- assign cur_lang = "en" -%}
+  {%- assign t_nav_home = "Home" -%}
+  {%- assign t_nav_doc = "Documentation" -%}
+  {%- assign t_nav_download = "Download" -%}
+  {%- assign t_nav_source = "Source code" -%}
+  {%- assign t_maint_core = "Maintained by the Galette team" -%}
+  {%- assign t_maint_community = "Community plugin" -%}
+  {%- assign t_maint_core_footer = "This plugin is developed and maintained by the Galette team." -%}
+  {%- assign t_maint_community_footer = "This plugin is developed and maintained by a community member." -%}
+  {%- assign t_contact = "Get in touch" -%}
+  {%- assign t_code_license = "Code under GPLv3" -%}
+  {%- assign t_content_license = "Contents under CC BY-SA 4.0" -%}
+  {%- assign t_scroll_label = "Scrollable content" -%}
+{%- endcase -%}

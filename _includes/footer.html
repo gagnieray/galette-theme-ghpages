@@ -1,0 +1,16 @@
+<footer class="site-footer">
+  <p class="footer-line">
+    {%- if site.maintainer == 'core' -%}
+      {{ t_maint_core_footer }}
+    {%- else -%}
+      {{ t_maint_community_footer }}
+    {%- endif %}
+    <a href="{{ site.galette_contact_url | default: 'https://galette.eu/site/contact/' }}">{{ t_contact }}</a>
+  </p>
+  <p class="footer-line">
+    <a href="{{ site.github.repository_url }}/blob/HEAD/COPYING">{{ t_code_license }}</a> &mdash;
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/">{{ t_content_license }}</a> &mdash;
+    <a rel="cc:attributionURL" href="https://galette.eu"><span rel="cc:attributionName">&copy; {{ site.author | default: 'Johan Cwiklinski' }}</span></a>
+  </p>
+  {% include social.html %}
+</footer>
