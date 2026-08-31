@@ -1,0 +1,30 @@
+{%- comment -%}
+The orange cartouche galette.eu carries in its header, pointing at wherever the
+plugin's archives actually live: releases on GitHub, nightly builds on
+galette.eu. Both URLs are configurable, and the whole box disappears when a site
+declares neither.
+
+  plugin:
+    name: Fullcard                    # optional, defaults to site.title
+    version: "2.2.1"
+    release_url: https://…/releases/tag/2.2.1   # defaults to the releases page
+    nightly_url: https://…-dev.tar.bz2          # or derived from plugin.archive
+{%- endcomment -%}
+{%- assign dl_name = site.plugin.name | default: site.title | default: site.github.repository_name -%}
+{%- assign release_url = site.plugin.release_url | default: site.github.releases_url -%}
+{%- assign nightly_url = site.plugin.nightly_url -%}
+{%- if nightly_url == nil and site.plugin.archive -%}
+  {%- capture nightly_url -%}{{ site.galette_download_url | default: 'https://galette.eu/download/plugins' }}/{{ site.plugin.archive }}-dev.tar.bz2{%- endcapture -%}
+{%- endif -%}
+{%- if release_url or nightly_url -%}
+<aside id="galette" aria-label="{{ t_nav_download }}">
+  <ul>
+    {%- if release_url %}
+    <li><a href="{{ release_url }}">{{ dl_name }} <strong>{{ site.plugin.version | default: t_latest }}</strong></a></li>
+    {%- endif %}
+    {%- if nightly_url %}
+    <li><a href="{{ nightly_url }}">{{ dl_name }} <strong>nightly</strong></a></li>
+    {%- endif %}
+  </ul>
+</aside>
+{%- endif -%}

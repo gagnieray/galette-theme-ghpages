@@ -1,0 +1,7 @@
+#!/bin/sh
+# Serve the demo site locally. `jekyll serve` may fail on very recent Rubies —
+# the github-pages gem pins old dependencies — in which case build and serve the
+# output with any static server:
+#   bundle exec jekyll build && python3 -m http.server -d _site
+set -e
+bundle exec jekyll serve "$@"

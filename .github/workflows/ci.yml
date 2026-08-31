@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build the demo site
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      # The demo site at the repository root exercises every layout, include and
+      # stylesheet the theme ships, so a build failure here is a failure for
+      # every site using the theme.
+      - name: Build
+        run: bundle exec jekyll build --trace
+
+      - name: Check the pages the demo is expected to produce
+        run: |
+          for page in index.html demo.html fr/demo.html assets/css/style.css; do
+            test -s "_site/$page" || { echo "missing or empty: _site/$page"; exit 1; }
+          done
+
+      - name: Check the stylesheet resolved its assets
+        run: |
+          grep -q 'ptsans-regular-webfont.woff2' _site/assets/css/style.css
+          grep -q '#ffb619' _site/assets/css/style.css
+
+      - name: Check the maintainer pill and the download cartouche rendered
+        run: |
+          grep -q 'maintainer-core' _site/index.html
+          grep -q 'id="galette"' _site/index.html
+
+      - name: Check the language selector links the translated page
+        run: grep -q 'hreflang="fr"' _site/demo.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-site
+          path: _site
+          retention-days: 7

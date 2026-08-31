@@ -22,6 +22,7 @@
 @import "galette/normalize";
 @import "galette/base";
 @import "galette/layout";
+@import "galette/mobilemenu";
 
 // Fonts are resolved relatively to the compiled stylesheet, so the theme works
 // under any `baseurl` (`/plugin-fullcard` on project pages, `/` elsewhere).

@@ -1,0 +1,57 @@
+{%- comment -%}
+The site menu, in the sidebar galette.eu puts it in — including its
+JavaScript-free off-canvas behaviour on small screens, driven by :target.
+
+Home and Documentation stay inside the current language and fall back on
+`default_lang` when a page has no translation; the remaining entries point at
+the repository and at galette.eu.
+{%- endcomment -%}
+{%- assign default_lang = site.default_lang | default: 'en' -%}
+{%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', cur_lang | first -%}
+{%- unless home_page -%}
+  {%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', default_lang | first -%}
+{%- endunless -%}
+{%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', cur_lang | first -%}
+{%- unless doc_page -%}
+  {%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', default_lang | first -%}
+{%- endunless -%}
+{%- assign tracker_url = site.tracker_url | default: site.github.issues_url -%}
+<aside id="sidebar">
+  <h2 class="mainmnulnk">{{ t_menu }}</h2>
+  <header>
+    <a href="#main-menu" id="main-menu-toggle" class="menu-toggle" aria-label="{{ t_menu_open }}">
+      <span class="sr-only">{{ t_menu_open }}</span>
+      <span class="menu-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 15" width="18px" height="15px"><path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/></svg>
+      </span>
+    </a>
+    <nav id="main-menu" class="main-menu" aria-label="{{ t_menu }}">
+      <a href="#main-menu-toggle" id="main-menu-close" class="menu-close" aria-label="{{ t_menu_close }}">
+        <span class="sr-only">{{ t_menu_close }}</span>
+        <span aria-hidden="true">
+          <svg viewBox="0 0 14 14" width="14" height="14"><path d="m2.608 0.44902c-0.59624-0.59629-1.5629-0.59844-2.1599-0.001422-0.59624 0.59629-0.59624 1.5652 0 2.1614l10.943 10.944c0.59624 0.59629 1.565 0.59629 2.1613 0 0.5977-0.59774 0.59628-1.5652-0.0014-2.16zm-2.1599 10.944c-0.59624 0.59629-0.59839 1.563-0.001421 2.16 0.59624 0.59629 1.5651 0.59629 2.1613 0l10.943-10.944c0.59624-0.59629 0.59624-1.5652 0-2.1614-0.5977-0.59774-1.5651-0.59632-2.1599 0.001421z" stroke-width="1.0296"/></svg>
+        </span>
+      </a>
+      <ul>
+        {%- if home_page %}
+        <li{% if page.ref == 'home' %} class="active"{% endif %}><a href="{{ home_page.url | relative_url }}">{{ t_nav_home }}</a></li>
+        {%- endif %}
+        {%- if doc_page %}
+        <li{% if page.ref == 'doc' %} class="active"{% endif %}><a href="{{ doc_page.url | relative_url }}">{{ t_nav_doc }}</a></li>
+        {%- endif %}
+        {%- if tracker_url %}
+        <li><a href="{{ tracker_url }}">{{ t_nav_tracker }}</a></li>
+        {%- endif %}
+        {%- if site.github.repository_url %}
+        <li><a href="{{ site.github.repository_url }}">{{ t_nav_source }}</a></li>
+        {%- endif %}
+      </ul>
+    </nav>
+    <a href="#main-menu-toggle" class="backdrop" tabindex="-1" aria-hidden="true"></a>
+  </header>
+  <h2>Galette</h2>
+  <ul>
+    <li><a href="{{ site.galette_url | default: 'https://galette.eu' }}">{{ t_galette_website }}</a></li>
+    <li><a href="{{ site.galette_doc_url | default: 'https://doc.galette.eu' }}">{{ t_galette_doc }}</a></li>
+  </ul>
+</aside>

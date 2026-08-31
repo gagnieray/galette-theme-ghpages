@@ -8,8 +8,13 @@ author: Johan Cwiklinski
 maintainer: core
 
 plugin:
-  archive: galette-plugin-example
+  name: Galette
+  version: "1.2.1"
+  release_url: https://galette.eu/download/galette-1.2.1.tar.bz2
+  nightly_url: https://galette.eu/download/galette-dev.tar.bz2
   min_galette: "1.3.0"
+
+tracker_url: https://bugs.galette.eu/projects/galette
 
 # Demo pages live in demo/, one directory per language, so the language
 # selector and the per-language navigation are exercised locally.

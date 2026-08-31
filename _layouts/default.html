@@ -6,24 +6,27 @@
     {%- include header.html -%}
     <main class="wrapper">
       <header>
-        <div class="header-title">
-          <h1>{{ site.title | default: site.github.repository_name }}</h1>
-          {%- comment -%}
-          A page may carry its own `description`, which is how a translated page
-          gets a translated tagline — `site.description` is global and Weblate
-          never touches _config.yml.
-          {%- endcomment -%}
-          <p class="tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</p>
+        <div class="header-wrapper">
+          <div class="header-title">
+            <h1>{{ site.title | default: site.github.repository_name }}</h1>
+            {%- comment -%}
+            A page may carry its own `description`, which is how a translated page
+            gets a translated tagline — `site.description` is global and Weblate
+            never touches _config.yml.
+            {%- endcomment -%}
+            <p class="tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</p>
+          </div>
+          <div class="header-meta">
+            {%- include maintainer.html -%}
+            {%- include langselector.html -%}
+          </div>
         </div>
-        <div class="header-meta">
-          {%- include maintainer.html -%}
-          {%- include langselector.html -%}
-        </div>
+        {%- include download.html -%}
       </header>
-      {%- include nav.html -%}
       <section id="content" aria-label="Content">
         {{ content }}
       </section>
+      {%- include sidebar.html -%}
     </main>
     {%- include footer.html -%}
     {%- include scripts.html -%}
