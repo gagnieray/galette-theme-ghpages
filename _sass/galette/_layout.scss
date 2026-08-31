@@ -101,6 +101,12 @@ main.wrapper {
         align-items: flex-start;
         gap: .5em;
     }
+
+    /* The cartouche hugs the far edge of the header, whichever edge that is. */
+    aside#galette {
+        margin-inline-start: auto;
+        margin-inline-end: 0;
+    }
 }
 
 section#content {
@@ -139,8 +145,8 @@ section#content {
 .requires {
     font-size: $small-font-size;
     color: $galette-grey;
-    border-left: 3px solid $galette-orange;
-    padding-left: .5em;
+    border-inline-start: 3px solid $galette-orange;
+    padding-inline-start: .5em;
 }
 
 /** Language selector */

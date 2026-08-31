@@ -1,0 +1,20 @@
+t_nav_home: Início
+t_nav_doc: Documentação
+t_nav_download: Descarregar
+t_nav_source: Código-fonte
+t_maint_core: Mantido pela equipa Galette
+t_maint_community: Plugin da comunidade
+t_maint_core_footer: Este plugin é desenvolvido e mantido pela equipa Galette.
+t_maint_community_footer: Este plugin é desenvolvido e mantido por um membro da comunidade.
+t_contact: Fale connosco
+t_code_license: Código sob GPLv3
+t_content_license: Conteúdos sob CC BY-SA 4.0
+t_scroll_label: Conteúdo deslizável
+t_menu: Menu
+t_menu_open: Abrir o menu principal
+t_menu_close: Fechar o menu principal
+t_nav_tracker: Erros e funcionalidades
+t_galette_website: Sítio web do Galette
+t_galette_doc: Documentação do Galette
+t_latest: mais recente
+t_requires: Requer Galette %s ou posterior.

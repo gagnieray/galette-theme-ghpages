@@ -24,6 +24,13 @@ body {
     padding: 0;
     background: $background-color url(#{$assets-path}/images/bg.png) top left no-repeat;
 
+    /* Galette ships a mirrored header photo for right-to-left languages.
+       `dir` sits on <html>, so this matches body inside it. */
+    [dir="rtl"] & {
+        background-image: url(#{$assets-path}/images/bg-rtl.png);
+        background-position: top right;
+    }
+
     font: $base-font-weight #{$base-font-size}/#{$base-line-height} $base-font-family;
     color: $text-color;
     -webkit-text-size-adjust: 100%;
@@ -96,7 +103,7 @@ section#content {
     blockquote {
         margin: 1.5em 0;
         padding: .5em 1em;
-        border-left: 4px solid $galette-orange;
+        border-inline-start: 4px solid $galette-orange;
         background: #fcfcfc;
         color: $galette-dark-grey;
 
@@ -125,7 +132,7 @@ section#content {
         th, td {
             border: 1px solid $galette-light-grey;
             padding: .4em .6em;
-            text-align: left;
+            text-align: start;
         }
 
         th {
@@ -195,7 +202,8 @@ aside#galette {
     background: $galette-light-grey;
     border-radius: 5px;
     padding: .3em;
-    margin: 0 0 0 auto;
+    margin: 0;
+    margin-inline-start: auto;
     position: relative;
     width: 100%;
 

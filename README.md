@@ -163,14 +163,34 @@ Remove the symlinks before committing — a local `_layouts/default.html` shadow
 the theme's, which is exactly what makes this work and also what would silently
 freeze the site on an old layout if left behind.
 
-Interface strings live in `_includes/i18n.html`, and language names in
-`_includes/lang-name.html` — as Liquid rather than `_data/i18n.yml`, because
-Jekyll themes only share `_layouts`, `_includes`, `_sass` and `assets`; a
-`_data` file would be invisible to the sites using the theme. Adding a language
-means adding a `when` branch to both files.
+### Languages
 
-Shipped: English, français, Deutsch, español, italiano, português, português do
-Brasil, slovenščina, українська, தமிழ். Anything else falls back to English.
+The theme knows the nineteen languages Galette translates into — the list shared
+with the core, the manual and every plugin, at
+<https://hosted.weblate.org/projects/galette/>. `i18n/languages.yml` holds their
+codes, their autonyms (computed the way `Galette\Core\I18n` computes them) and
+which are right-to-left.
+
+Interface strings live in `i18n/<lang>.yml`, one file per language, which is what
+Weblate translates. `bin/build-i18n` turns them into `_includes/i18n.html` and
+`_includes/lang-name.html`, and both are committed: Jekyll themes only share
+`_layouts`, `_includes`, `_sass` and `assets`, so a `_data/i18n.yml` would be
+invisible to the sites using the theme, and Liquid is no format to hand a
+translator. CI fails if the two drift.
+
+```bash
+./bin/build-i18n            # regenerate after editing i18n/*.yml
+./bin/build-i18n --check    # what CI runs
+```
+
+Ten languages have their own strings; the nine others render the English ones
+until they are translated, while still declaring their own `lang` and text
+direction. A language absent from `languages.yml` falls back to English
+entirely.
+
+Right-to-left languages get `dir="rtl"` on `<html>`, Galette's mirrored header
+photo, and a layout built on logical properties, so nothing needs a second
+stylesheet.
 
 ## Licence
 

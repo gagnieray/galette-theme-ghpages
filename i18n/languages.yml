@@ -1,0 +1,34 @@
+# The languages Galette translates into, shared with the core, the manual and
+# every plugin: https://hosted.weblate.org/projects/galette/
+#
+# `name` is the autonym, computed the way Galette computes it in
+# Galette\Core\I18n::guessLangs() — Locale::getDisplayLanguage($code, $code),
+# title-cased, with the region appended when it is not implied by the language.
+# `rtl` follows Galette\Core\I18n::$rtl_langs, which lists ar, az, fa, he and ur;
+# Weblate reports ota as RTL but Galette treats it as left-to-right, and this
+# follows Galette.
+#
+# This file is reference data, not translatable content: Weblate owns the other
+# i18n/*.yml, not this one.
+ar:    {name: العربية, rtl: true}
+br:    {name: Brezhoneg}
+ca:    {name: Català}
+de:    {name: Deutsch}
+en:    {name: English}
+es:    {name: Español}
+fr:    {name: Français}
+it:    {name: Italiano}
+nb_NO: {name: Norsk Bokmål}
+# ICU has no autonym for Ottoman Turkish and falls back to a French string
+# ("Turc Ottoman"), which is what Galette ends up displaying. Using the Turkish
+# name instead; correct it here if the translators prefer another form.
+ota:   {name: Osmanlıca}
+oc:    {name: Occitan}
+pt:    {name: Português}
+pt_BR: {name: "Português, Brasil"}
+ru:    {name: Русский}
+si:    {name: සිංහල}
+sl:    {name: Slovenščina}
+ta:    {name: தமிழ்}
+tr:    {name: Türkçe}
+uk:    {name: Українська}

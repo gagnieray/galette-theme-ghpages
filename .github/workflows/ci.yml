@@ -23,6 +23,11 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
+      # The Liquid the theme ships is generated from the YAML Weblate owns, and
+      # committed. If the two drift, sites get stale strings with no warning.
+      - name: Check the generated i18n includes match i18n/*.yml
+        run: ./bin/build-i18n --check
+
       # The demo site at the repository root exercises every layout, include and
       # stylesheet the theme ships, so a build failure here is a failure for
       # every site using the theme.
@@ -47,6 +52,9 @@ jobs:
 
       - name: Check the language selector links the translated page
         run: grep -q 'hreflang="fr"' _site/demo.html
+
+      - name: Check right-to-left support is wired
+        run: grep -q 'bg-rtl.png' _site/assets/css/style.css
 
       - uses: actions/upload-artifact@v4
         with:

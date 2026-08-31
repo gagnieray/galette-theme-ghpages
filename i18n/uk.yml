@@ -1,0 +1,20 @@
+t_nav_home: Головна
+t_nav_doc: Документація
+t_nav_download: Завантажити
+t_nav_source: Початковий код
+t_maint_core: Підтримується командою Galette
+t_maint_community: Плагін спільноти
+t_maint_core_footer: Цей плагін розробляє та підтримує команда Galette.
+t_maint_community_footer: Цей плагін розробляє та підтримує учасник спільноти.
+t_contact: Будьмо на зв’язку
+t_code_license: Код під GPLv3
+t_content_license: Вміст під CC BY-SA 4.0
+t_scroll_label: Прокручуваний вміст
+t_menu: Меню
+t_menu_open: Відкрити головне меню
+t_menu_close: Закрити головне меню
+t_nav_tracker: Помилки та можливості
+t_galette_website: Вебсайт Galette
+t_galette_doc: Документація Galette
+t_latest: найновіша
+t_requires: Потрібна Galette %s або новіша.

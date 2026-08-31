@@ -25,6 +25,9 @@ defaults:
     values: {lang: fr}
 
 exclude:
+  - bin
+  - i18n
+  - script
   - Gemfile
   - Gemfile.lock
   - vendor

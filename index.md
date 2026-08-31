@@ -127,18 +127,21 @@ two languages can never collide on the same one.
 
 ## Adding a language to the interface
 
+The theme knows the nineteen languages Galette translates into — the list shared
+with the core, the manual and every plugin, on
+[Weblate](https://hosted.weblate.org/projects/galette/).
+
 Interface strings — the menu labels, the maintainer sentences, the cartouche, the
-footer — live in `_includes/i18n.html`, with the language names in
-`_includes/lang-name.html`. They are Liquid rather than `_data/i18n.yml` because
-Jekyll themes only share `_layouts`, `_includes`, `_sass` and `assets`; a
-`_data` file would be invisible to every site using the theme.
+footer — live in `i18n/<lang>.yml` in the theme repository, which is what Weblate
+translates; `bin/build-i18n` turns them into the `_includes` the theme actually
+ships. Ten languages have their own strings today, the nine others render the
+English ones while still declaring their own language and text direction.
 
-Currently shipped: English, français, Deutsch, español, italiano, português,
-português do Brasil, slovenščina, українська, தமிழ். Anything else falls back
-to English.
+Right-to-left languages get `dir="rtl"`, Galette's mirrored header photo, and a
+layout built on logical properties.
 
-The strings the menu and the cartouche need are part of that set, so adding a
-language means one `when` branch in each of the two includes.
+Publishing a language on your own site is independent of that: add its
+`defaults` entry and the pages, and the selector picks it up.
 
 The eight strings the menu and the cartouche need are part of that set, so a new
 language means one `when` branch in each of the two includes.

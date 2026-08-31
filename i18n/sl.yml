@@ -1,0 +1,20 @@
+t_nav_home: Domov
+t_nav_doc: Dokumentacija
+t_nav_download: Prenos
+t_nav_source: Izvorna koda
+t_maint_core: Vzdržuje ekipa Galette
+t_maint_community: Vtičnik skupnosti
+t_maint_core_footer: Ta vtičnik razvija in vzdržuje ekipa Galette.
+t_maint_community_footer: Ta vtičnik razvija in vzdržuje član skupnosti.
+t_contact: Ostanimo v stiku
+t_code_license: Koda pod GPLv3
+t_content_license: Vsebina pod CC BY-SA 4.0
+t_scroll_label: Drsljiva vsebina
+t_menu: Meni
+t_menu_open: Odpri glavni meni
+t_menu_close: Zapri glavni meni
+t_nav_tracker: Napake in funkcije
+t_galette_website: Spletna stran Galette
+t_galette_doc: Dokumentacija Galette
+t_latest: najnovejša
+t_requires: Zahteva Galette %s ali novejšo.

@@ -1,0 +1,21 @@
+t_nav_home: முதற்பக்கம்
+t_nav_doc: ஆவணமாக்கல்
+t_nav_download: பதிவிறக்கம்
+t_nav_source: மூலக் குறியீடு
+t_maint_core: Galette குழுவால் பராமரிக்கப்படுகிறது
+t_maint_community: சமூகச் செருகுநிரல்
+t_maint_core_footer: இந்தச் செருகுநிரல் Galette குழுவால் உருவாக்கப்பட்டு பராமரிக்கப்படுகிறது.
+t_maint_community_footer: இந்தச் செருகுநிரல் சமூக உறுப்பினர் ஒருவரால் உருவாக்கப்பட்டு
+  பராமரிக்கப்படுகிறது.
+t_contact: தொடர்பில் இருப்போம்
+t_code_license: குறியீடு GPLv3 உரிமத்தில்
+t_content_license: உள்ளடக்கம் CC BY-SA 4.0 உரிமத்தில்
+t_scroll_label: உருள்கூடிய உள்ளடக்கம்
+t_menu: பட்டி
+t_menu_open: முதன்மைப் பட்டியைத் திற
+t_menu_close: முதன்மைப் பட்டியை மூடு
+t_nav_tracker: பிழைகளும் வசதிகளும்
+t_galette_website: Galette இணையதளம்
+t_galette_doc: Galette ஆவணமாக்கல்
+t_latest: அண்மையது
+t_requires: Galette %s அல்லது புதியது தேவை.
