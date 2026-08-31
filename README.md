@@ -143,6 +143,25 @@ Asset URLs in the SCSS are relative to the compiled stylesheet
 (`../images/bg.png`, not `/site/assets/images/bg.png` as on galette.eu), so the
 theme works under any `baseurl`.
 
+### Previewing a plugin site against the theme
+
+`remote_theme` always downloads the theme's **pushed** default branch, and caches
+it under `/tmp/jekyll-remote-theme-*`. A theme change is therefore invisible to a
+consuming site until it is pushed here — which is the usual reason a site looks
+like it ignored an edit.
+
+To try a site against an unpushed theme, drop `remote_theme` from its config and
+link the four directories a theme shares:
+
+```bash
+ln -s /path/to/theme-ghpages/{_layouts,_includes,_sass,assets} .
+bundle exec jekyll build --config _config.yml,_config.notheme.yml
+```
+
+Remove the symlinks before committing — a local `_layouts/default.html` shadows
+the theme's, which is exactly what makes this work and also what would silently
+freeze the site on an old layout if left behind.
+
 Interface strings live in `_includes/i18n.html`, and language names in
 `_includes/lang-name.html` — as Liquid rather than `_data/i18n.yml`, because
 Jekyll themes only share `_layouts`, `_includes`, `_sass` and `assets`; a
