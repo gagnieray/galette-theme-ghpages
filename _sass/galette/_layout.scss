@@ -71,6 +71,16 @@ main.wrapper {
     }
 
     .header-title {
+        /* The minimum Galette version sits on the title's baseline: it is the
+           first thing a visitor needs to know, so it belongs here rather than
+           in the column beside. */
+        .title-line {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: .3em .8em;
+        }
+
         h1 {
             display: inline-block;
             border-bottom: 1px solid $galette-orange;
@@ -99,7 +109,11 @@ section#content {
     margin-top: 1.5em;
 }
 
-/** Maintainer pill */
+/** Maintainer pill. Core and community share these colours: only the icon
+    distinguishes them, which is what the review asked for.
+
+    Galette orange never carries text on white: it stays a background here, with
+    the dark grey on top, which keeps the contrast ratio comfortable. */
 .maintainer {
     display: inline-flex;
     align-items: center;
@@ -109,19 +123,14 @@ section#content {
     padding: .3em .7em;
     border-radius: 999px;
     white-space: nowrap;
+    background: $galette-orange;
+    color: $galette-dark-grey;
+    border: 1px solid $galette-dark-orange;
 
-    /* Galette orange never carries text on white: it stays a background here,
-       with the dark grey on top, which keeps the contrast ratio comfortable. */
-    &.maintainer-core {
-        background: $galette-orange;
-        color: $galette-dark-grey;
-        border: 1px solid $galette-dark-orange;
-    }
-
-    &.maintainer-community {
-        background: $galette-light-grey;
-        color: $galette-dark-grey;
-        border: 1px solid darken($galette-light-grey, 15%);
+    .maintainer-icon {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
     }
 }
 

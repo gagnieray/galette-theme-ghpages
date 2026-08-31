@@ -20,7 +20,13 @@ declare them, and the version then lives in exactly one place.
 {%- if release_url == nil and site.plugin.archive and site.plugin.version -%}
   {%- capture release_url -%}{{ dl_base }}/{{ site.plugin.archive }}-{{ site.plugin.version }}.tar.bz2{%- endcapture -%}
 {%- endif -%}
-{%- assign release_url = release_url | default: site.github.releases_url -%}
+{%- comment -%}
+  On GitHub the useful stable target is /releases/latest — it redirects to the
+  current release — not /releases, which is the whole list.
+{%- endcomment -%}
+{%- if release_url == nil and site.github.releases_url -%}
+  {%- capture release_url -%}{{ site.github.releases_url }}/latest{%- endcapture -%}
+{%- endif -%}
 {%- assign nightly_url = site.plugin.nightly_url -%}
 {%- if nightly_url == nil and site.plugin.archive -%}
   {%- capture nightly_url -%}{{ dl_base }}/{{ site.plugin.archive }}-dev.tar.bz2{%- endcapture -%}

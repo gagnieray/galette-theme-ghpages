@@ -38,7 +38,7 @@ a local `_layouts/default.html` would shadow the theme's.
 | --- | --- | --- |
 | `title` | yes | Plugin name, shown as the page heading |
 | `description` | yes | Tagline under the heading, and the meta description. A page may override it with its own `description` front matter — that is how a translated page gets a translated tagline. |
-| `maintainer` | yes | `core` shows the orange “Maintained by the Galette team” pill, `community` the grey one. Anything else is treated as `community`. |
+| `maintainer` | yes | `core` shows a “Maintained by the Galette team” pill with an outlined star, `community` a “Community plugin” one with a group icon. Same colours: only the icon differs. Anything else is treated as `community`. |
 | `tracker_url` | no | Bug tracker in the menu, defaults to the repository's GitHub issues |
 | `default_lang` | no | Language the menu falls back to when a page has no translation, defaults to `en` |
 | `author` | no | Name in the copyright line, defaults to Johan Cwiklinski |
@@ -70,7 +70,7 @@ live — releases on GitHub, nightly builds on galette.eu:
 | `plugin.archive` | no | Archive base name. With `plugin.version` it builds both URLs on galette.eu: `{archive}-{version}.tar.bz2` and `{archive}-dev.tar.bz2`. |
 | `plugin.version` | no | Version shown on the stable button, `latest` when absent |
 | `plugin.min_galette` | no | Minimum Galette version, shown beside the maintainer pill |
-| `plugin.release_url` | no | Overrides the derived stable URL; falls back to the repository's releases page |
+| `plugin.release_url` | no | Overrides the derived stable URL; falls back to the repository's `releases/latest` |
 | `plugin.nightly_url` | no | Overrides the derived nightly URL |
 | `plugin.name` | no | Label on both buttons, defaults to `title` |
 | `galette_download_url` | no | Base the two URLs are built on, defaults to `https://galette.eu/download/plugins` |
