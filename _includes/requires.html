@@ -1,0 +1,8 @@
+{%- comment -%}
+The minimum Galette version, from `plugin.min_galette`. It is rendered here and
+not written into the pages, so the number never ends up inside a string a
+translator has to carry — `%s` is substituted after translation.
+{%- endcomment -%}
+{%- if site.plugin.min_galette -%}
+  <span class="requires">{{ t_requires | replace: '%s', site.plugin.min_galette }}</span>
+{%- endif -%}

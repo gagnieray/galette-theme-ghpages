@@ -125,6 +125,14 @@ section#content {
     }
 }
 
+/** Minimum Galette version, beside the maintainer pill */
+.requires {
+    font-size: $small-font-size;
+    color: $galette-grey;
+    border-left: 3px solid $galette-orange;
+    padding-left: .5em;
+}
+
 /** Language selector */
 .langselector {
     display: flex;

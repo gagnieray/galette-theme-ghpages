@@ -24,9 +24,9 @@ title: Galette Fullcard
 description: Full member card as PDF
 maintainer: core            # core | community
 plugin:
+  archive: galette-plugin-fullcard
   version: "2.2.1"
-  release_url: https://github.com/galette-plugins/plugin-fullcard/releases/tag/2.2.1
-  nightly_url: https://galette.eu/download/plugins/galette-plugin-fullcard-dev.tar.bz2
+  min_galette: "1.3.0"
 defaults:
   - scope: {path: ""}
     values: {layout: default, lang: en}
@@ -61,14 +61,24 @@ live — releases on GitHub, nightly builds on galette.eu:
 
 | Key | Required | What it does |
 | --- | --- | --- |
+| `plugin.archive` | no | Archive base name. With `plugin.version` it builds both URLs on galette.eu: `{archive}-{version}.tar.bz2` and `{archive}-dev.tar.bz2`. |
 | `plugin.version` | no | Version shown on the stable button, `latest` when absent |
-| `plugin.release_url` | no | Stable download, defaults to the repository's releases page |
-| `plugin.nightly_url` | no | Nightly download; omit the button by leaving both this and `plugin.archive` unset |
-| `plugin.archive` | no | Archive base name, a shortcut that builds `https://galette.eu/download/plugins/{archive}-dev.tar.bz2` |
+| `plugin.min_galette` | no | Minimum Galette version, shown beside the maintainer pill |
+| `plugin.release_url` | no | Overrides the derived stable URL; falls back to the repository's releases page |
+| `plugin.nightly_url` | no | Overrides the derived nightly URL |
 | `plugin.name` | no | Label on both buttons, defaults to `title` |
-| `galette_download_url` | no | Base URL `plugin.archive` builds on |
+| `galette_download_url` | no | Base the two URLs are built on, defaults to `https://galette.eu/download/plugins` |
 
 The whole cartouche disappears when a site declares no download at all.
+
+Galette plugin releases live on galette.eu rather than on GitHub — plugin-fullcard
+has no GitHub release at all — so declaring `archive` and `version` is the normal
+way, and the version then lives in exactly one place.
+
+The version and the minimum Galette version belong here and nowhere else: a
+number written into a page becomes a string a translator has to carry, in every
+language, and has to be bumped in each of them at every release.
+
 
 ### The menu
 
