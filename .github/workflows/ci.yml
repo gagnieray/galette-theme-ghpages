@@ -25,7 +25,7 @@ jobs:
 
       # The Liquid the theme ships is generated from the YAML Weblate owns, and
       # committed. If the two drift, sites get stale strings with no warning.
-      - name: Check the generated i18n includes match i18n/*.yml
+      - name: Check the generated i18n includes match i18n/strings/*.yml
         run: ./bin/build-i18n --check
 
       # The demo site at the repository root exercises every layout, include and

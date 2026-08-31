@@ -25,6 +25,7 @@ defaults:
     values: {lang: fr}
 
 exclude:
+  - WEBLATE.md
   - bin
   - i18n
   - script

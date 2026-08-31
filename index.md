@@ -134,7 +134,7 @@ with the core, the manual and every plugin, on
 [Weblate](https://hosted.weblate.org/projects/galette/).
 
 Interface strings — the menu labels, the maintainer sentences, the cartouche, the
-footer — live in `i18n/<lang>.yml` in the theme repository, which is what Weblate
+footer — live in `i18n/strings/<lang>.yml` in the theme repository, which is what Weblate
 translates; `bin/build-i18n` turns them into the `_includes` the theme actually
 ships. Ten languages have their own strings today, the nine others render the
 English ones while still declaring their own language and text direction.

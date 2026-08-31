@@ -177,7 +177,7 @@ with the core, the manual and every plugin, at
 codes, their autonyms (computed the way `Galette\Core\I18n` computes them) and
 which are right-to-left.
 
-Interface strings live in `i18n/<lang>.yml`, one file per language, which is what
+Interface strings live in `i18n/strings/<lang>.yml`, one file per language, which is what
 Weblate translates. `bin/build-i18n` turns them into `_includes/i18n.html` and
 `_includes/lang-name.html`, and both are committed: Jekyll themes only share
 `_layouts`, `_includes`, `_sass` and `assets`, so a `_data/i18n.yml` would be
@@ -185,9 +185,13 @@ invisible to the sites using the theme, and Liquid is no format to hand a
 translator. CI fails if the two drift.
 
 ```bash
-./bin/build-i18n            # regenerate after editing i18n/*.yml
+./bin/build-i18n            # regenerate after editing i18n/strings/*.yml
 ./bin/build-i18n --check    # what CI runs
 ```
+
+`i18n/languages.yml` is reference data and stays out of the translation file
+mask. Setting the Weblate components up is described in
+[WEBLATE.md](WEBLATE.md).
 
 Ten languages have their own strings; the nine others render the English ones
 until they are translated, while still declaring their own `lang` and text
