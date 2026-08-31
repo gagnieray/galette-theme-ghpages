@@ -109,11 +109,9 @@ section#content {
     margin-top: 1.5em;
 }
 
-/** Maintainer pill. Core and community share these colours: only the icon
-    distinguishes them, which is what the review asked for.
-
-    Galette orange never carries text on white: it stays a background here, with
-    the dark grey on top, which keeps the contrast ratio comfortable. */
+/** Maintainer pill. No background, so the text keeps the page's own contrast;
+    the icon and the border colour carry the distinction — Galette orange for the
+    core team, grey for a community plugin. */
 .maintainer {
     display: inline-flex;
     align-items: center;
@@ -123,9 +121,12 @@ section#content {
     padding: .3em .7em;
     border-radius: 999px;
     white-space: nowrap;
-    background: $galette-orange;
     color: $galette-dark-grey;
-    border: 1px solid $galette-dark-orange;
+    border: 1px solid $galette-orange;
+
+    &.maintainer-community {
+        border-color: $galette-grey;
+    }
 
     .maintainer-icon {
         width: 15px;

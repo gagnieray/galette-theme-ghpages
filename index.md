@@ -38,7 +38,7 @@ a local `_layouts/default.html` would shadow the theme's.
 | --- | --- | --- |
 | `title` | yes | Plugin name, shown as the page heading |
 | `description` | yes | Tagline under the heading, and the meta description. A page may override it with its own `description` front matter — that is how a translated page gets a translated tagline. |
-| `maintainer` | yes | `core` shows a “Maintained by the Galette team” pill with an outlined star, `community` a “Community plugin” one with a group icon. Same colours: only the icon differs. Anything else is treated as `community`. |
+| `maintainer` | yes | `core` shows a “Maintained by the Galette team” pill outlined in Galette orange with an outlined star, `community` a “Community plugin” one outlined in grey with a group icon. Anything else is treated as `community`. |
 | `tracker_url` | no | Bug tracker in the menu, defaults to the repository's GitHub issues |
 | `default_lang` | no | Language the menu falls back to when a page has no translation, defaults to `en` |
 | `author` | no | Name in the copyright line, defaults to Johan Cwiklinski |
