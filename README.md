@@ -190,8 +190,13 @@ translator. CI fails if the two drift.
 ```
 
 `i18n/languages.yml` is reference data and stays out of the translation file
-mask. Setting the Weblate components up is described in
-[WEBLATE.md](WEBLATE.md).
+mask.
+
+You rarely need to run this by hand: `.github/workflows/i18n.yml` regenerates and
+commits the includes whenever `i18n/strings/**`, `i18n/languages.yml` or
+`bin/build-i18n` changes on `main`, which is what keeps Weblate's translations
+flowing through without an add-on. Setting the Weblate components up is described
+in [WEBLATE.md](WEBLATE.md).
 
 Ten languages have their own strings; the nine others render the English ones
 until they are translated, while still declaring their own `lang` and text

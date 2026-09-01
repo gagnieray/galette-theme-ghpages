@@ -47,11 +47,32 @@ nine others appear empty and fall back to English on the sites until filled.
 language codes, autonyms, text direction — not translatable content. A mask of
 `i18n/*.yml` would make Weblate treat `languages` as a language code.
 
-**After every merge, `bin/build-i18n` has to run**, because the Liquid the theme
-actually ships is generated from these YAML files. CI fails when the two drift,
-which catches it, but it is a manual step on each Weblate pull request. If that
-becomes tiresome, the *Execute script* add-on can run `bin/build-i18n` on change,
-or CI can be taught to commit the result.
+### Keeping the generated Liquid in step
+
+The Liquid the theme ships is generated from these YAML files, so `bin/build-i18n`
+has to run once translations land. The *Execute script* add-on is not available
+on hosted.weblate.org, so `.github/workflows/i18n.yml` does it instead: on a push
+to `main` touching `i18n/strings/**`, `i18n/languages.yml` or `bin/build-i18n`, it
+regenerates the two includes and commits them if they changed. Nothing runs for
+an ordinary commit.
+
+Two things make it safe against looping: its own commit touches only
+`_includes/`, which no path filter matches, and a push authenticated with
+`GITHUB_TOKEN` does not start workflows.
+
+The CI drift check therefore **warns rather than fails**. A Weblate pull request
+only ever touches `i18n/strings/*.yml`, so the includes are stale until the merge
+— expected, and not something to block on. On a human pull request the same
+warning is the reminder to run the script.
+
+**If `main` is protected**, the workflow's push is refused. Either allow
+`github-actions[bot]` to bypass the restriction, or give the workflow a token
+that can. There is no way around it with the default `GITHUB_TOKEN`.
+
+A consuming site still needs its own Pages rebuild to pick up new strings — a
+theme change does not trigger one. That is a `POST /repos/{owner}/{repo}/pages/builds`
+per site, and could be another workflow step once the list of consuming sites is
+settled.
 
 ## 2. A plugin site's pages
 

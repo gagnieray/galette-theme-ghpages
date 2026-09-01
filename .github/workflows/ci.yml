@@ -24,9 +24,14 @@ jobs:
           bundler-cache: true
 
       # The Liquid the theme ships is generated from the YAML Weblate owns, and
-      # committed. If the two drift, sites get stale strings with no warning.
+      # committed. Weblate's pull requests touch only i18n/strings/*.yml, so the
+      # includes are stale until the Regenerate i18n workflow runs on main after
+      # the merge — expected, hence a warning rather than a failure. On a human
+      # pull request it is the reminder to run bin/build-i18n.
       - name: Check the generated i18n includes match i18n/strings/*.yml
-        run: ./bin/build-i18n --check
+        run: |
+          ./bin/build-i18n --check \
+            || echo "::warning file=_includes/i18n.html::Out of date with i18n/strings/*.yml. Run ./bin/build-i18n, or let the Regenerate i18n workflow do it once this lands on main."
 
       # The demo site at the repository root exercises every layout, include and
       # stylesheet the theme ships, so a build failure here is a failure for
