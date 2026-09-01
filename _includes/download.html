@@ -5,20 +5,39 @@ disappears when a site declares neither.
 
   plugin:
     name: Fullcard                    # optional, defaults to site.title
-    version: "2.2.1"
-    archive: galette-plugin-fullcard  # builds both URLs below on galette.eu
+    archive: galette-plugin-fullcard  # names the tarball, on either host
+    version: "2.2.1"                  # only while the plugin is published by hand
     release_url: …                    # overrides the derived stable URL
     nightly_url: …                    # overrides the derived nightly URL
 
-Galette plugin releases live on galette.eu rather than on GitHub — plugin-fullcard
-has no GitHub release at all — so `archive` plus `version` is the normal way to
-declare them, and the version then lives in exactly one place.
+A plugin whose releases are built by GitHub Actions declares no version: the
+number comes from the latest release, and nothing has to be bumped here at each
+release. `version` means "this plugin is still published by hand on galette.eu",
+and takes both URLs back there.
+
+site.github.latest_release is the /releases/latest endpoint, which skips drafts
+and prereleases — so the rolling `nightly` prerelease never becomes the number
+shown as stable.
 {%- endcomment -%}
 {%- assign dl_name = site.plugin.name | default: site.title | default: site.github.repository_name -%}
 {%- assign dl_base = site.galette_download_url | default: 'https://galette.eu/download/plugins' -%}
+{%- assign dl_version = site.plugin.version -%}
 {%- assign release_url = site.plugin.release_url -%}
 {%- if release_url == nil and site.plugin.archive and site.plugin.version -%}
   {%- capture release_url -%}{{ dl_base }}/{{ site.plugin.archive }}-{{ site.plugin.version }}.tar.bz2{%- endcapture -%}
+{%- endif -%}
+{%- comment -%}
+  releases_url ends in /releases, so /download/<tag>/<file> is the asset itself
+  rather than the page listing it.
+{%- endcomment -%}
+{%- if release_url == nil and site.github.latest_release.tag_name -%}
+  {%- assign dl_tag = site.github.latest_release.tag_name -%}
+  {%- assign dl_version = dl_tag -%}
+  {%- if site.plugin.archive and site.github.releases_url -%}
+    {%- capture release_url -%}{{ site.github.releases_url }}/download/{{ dl_tag }}/{{ site.plugin.archive }}-{{ dl_tag }}.tar.bz2{%- endcapture -%}
+  {%- else -%}
+    {%- assign release_url = site.github.latest_release.html_url -%}
+  {%- endif -%}
 {%- endif -%}
 {%- comment -%}
   On GitHub the useful stable target is /releases/latest — it redirects to the
@@ -29,13 +48,17 @@ declare them, and the version then lives in exactly one place.
 {%- endif -%}
 {%- assign nightly_url = site.plugin.nightly_url -%}
 {%- if nightly_url == nil and site.plugin.archive -%}
-  {%- capture nightly_url -%}{{ dl_base }}/{{ site.plugin.archive }}-dev.tar.bz2{%- endcapture -%}
+  {%- if site.plugin.version -%}
+    {%- capture nightly_url -%}{{ dl_base }}/{{ site.plugin.archive }}-dev.tar.bz2{%- endcapture -%}
+  {%- elsif site.github.releases_url -%}
+    {%- capture nightly_url -%}{{ site.github.releases_url }}/download/nightly/{{ site.plugin.archive }}-dev.tar.bz2{%- endcapture -%}
+  {%- endif -%}
 {%- endif -%}
 {%- if release_url or nightly_url -%}
 <aside id="galette" aria-label="{{ t_nav_download }}">
   <ul>
     {%- if release_url %}
-    <li><a href="{{ release_url }}">{{ dl_name }} <strong>{{ site.plugin.version | default: t_latest }}</strong></a></li>
+    <li><a href="{{ release_url }}">{{ dl_name }} <strong>{{ dl_version | default: t_latest }}</strong></a></li>
     {%- endif %}
     {%- if nightly_url %}
     <li><a href="{{ nightly_url }}">{{ dl_name }} <strong>nightly</strong></a></li>
