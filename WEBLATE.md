@@ -117,16 +117,59 @@ prevent.
 
 ## 2. A plugin site's pages
 
-One component per page, because a component maps one file mask.
+One component per page, because a component maps one file mask. Rather than
+creating them by hand, create one and let the **Component discovery** add-on
+create the rest — it also picks up a page added later.
 
-| Setting | `…-site-home` | `…-site-doc` |
-| --- | --- | --- |
-| Repository | the plugin repository | same |
-| Branch | `gh-pages` | `gh-pages` |
-| File format | **Markdown file** (API `markdown`) | same |
-| File mask | `*/index.md` | `*/documentation.md` |
-| Monolingual base language file | `index.md` | `documentation.md` |
-| Template for new translations | `index.md` | `documentation.md` |
+### Create the first component
+
+*Add new translation component*, **From version control**:
+
+| Setting | Value |
+| --- | --- |
+| Component name | `Fullcard site: documentation` |
+| Repository | `https://github.com/galette-plugins/plugin-fullcard.git` |
+| **Branch** | **`gh-pages`** — not the default branch |
+| File format | **Markdown file** |
+| File mask | `*/documentation.md` |
+| Monolingual base language file | `documentation.md` |
+| Template for new translations | `documentation.md` |
+| Source language | English |
+| License | GPL-3.0-only |
+
+Then, in *Manage → Settings*, under **File format parameters**:
+
+* **Translate front matter values** — on. The pages carry `title` and
+  `description` in their front matter, and the tagline in the header comes from
+  `description`. Without this the front matter is offered as one opaque block.
+* **Deduplicate identical strings** — on. It keeps translations stable when a
+  table row or a section moves.
+
+### Add the discovery add-on
+
+*Manage → Add-ons → Component discovery* (`weblate.discovery.discovery`):
+
+| Field | Value |
+| --- | --- |
+| Regular expression | `(?P<language>[a-z]{2,3}(?:_[A-Z]{2})?)/(?P<component>index\|documentation)\.md` |
+| File format | Markdown file |
+| Customize the component name | `Fullcard site: {{ component }}` |
+| Define the monolingual base filename | `{{ component }}.md` |
+| Define the base file for new translations | `{{ component }}.md` |
+| Clone add-ons from the main component | on |
+| Remove components for inexistent files | off, at least to start with |
+
+The language group is deliberately tight — two or three lowercase letters, with an
+optional `_XX` region — so it matches `fr`, `ota` and `pt_BR` but not a future
+`images/` directory. Weblate derives the file mask from it by replacing the
+language group with `*`, giving `*/index.md` and `*/documentation.md`.
+
+The add-on runs on installation and after every repository update, so a page or a
+language added later needs nothing.
+
+**File format parameters are not part of the add-on's configuration.** Cloning
+add-ons does not clone them, so check *Translate front matter values* and
+*Deduplicate identical strings* on each component the add-on creates.
 
 File format parameters, both components:
 
