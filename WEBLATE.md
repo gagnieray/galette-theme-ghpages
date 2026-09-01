@@ -69,10 +69,51 @@ warning is the reminder to run the script.
 `github-actions[bot]` to bypass the restriction, or give the workflow a token
 that can. There is no way around it with the default `GITHUB_TOKEN`.
 
-A consuming site still needs its own Pages rebuild to pick up new strings — a
-theme change does not trigger one. That is a `POST /repos/{owner}/{repo}/pages/builds`
-per site, and could be another workflow step once the list of consuming sites is
-settled.
+### Rebuilding the sites
+
+A site using `remote_theme` downloads this repository when Pages builds it, so it
+keeps serving the previous version of the theme until Pages builds it again —
+nothing triggers that on its own. `bin/rebuild-consumers`, run by
+`.github/workflows/rebuild-consumers.yml`, asks for one.
+
+The sites are **discovered, not listed**: every non-archived repository of the
+organisation that has a Pages site whose `_config.yml` references
+`galette/theme-ghpages`. A hand-kept list went stale twice over — the day
+`plugin-fullcard` moved between organisations, and the day stripe, legalnotices
+and helloasso adopted the theme on a `gh-pages-galette-theme` branch of their
+own. Discovery also means a repository that does not use the theme is never
+rebuilt for nothing.
+
+The scan follows the Pages source rather than assuming it: the branch can be
+anything, and a source under a subdirectory has its `_config.yml` there. The
+match is on the theme slug, not a whole line, so pinning to a tag
+(`galette/theme-ghpages@v1`) still counts.
+
+```bash
+DRY_RUN=1 ./bin/rebuild-consumers      # list the sites without rebuilding
+THEME_ORG=… THEME_SLUG=… EXTRA_REPOS=… # scan elsewhere, or add repos outside the org
+```
+
+The workflow exposes the same dry run through *Run workflow*.
+
+It runs when `_layouts/`, `_includes/`, `_sass/` or `assets/` change on `main`,
+and also after *Regenerate i18n* completes. That second trigger is not
+redundant: the regeneration commits `_includes/` with `GITHUB_TOKEN`, and such a
+push starts no workflow, so a translation update would otherwise never reach the
+sites.
+
+**It needs a token, and this is why.** `GITHUB_TOKEN` is minted for the workflow's
+own repository and cannot act on another one, whatever permissions the workflow
+declares — so it can never rebuild a plugin site. The workflow reads
+`secrets.CONSUMER_PAGES_TOKEN` instead, which needs the **Pages** repository
+permission at *write* on the consuming repositories. An organisation secret
+shared with this repository covers them all at once. A fine-grained token limited
+to Pages is enough; it needs no code access.
+
+Without the secret the workflow does not fail, it warns and rebuilds nothing —
+so a fork or a contributor is not blocked. When a rebuild is refused it does
+fail, because a site silently serving a stale theme is the thing this exists to
+prevent.
 
 ## 2. A plugin site's pages
 
@@ -113,15 +154,25 @@ Weblate will consider German untranslated and, on its first write, replace the
 file with its own output. For `plugin-fullcard` that would discard the nine
 catalogues recovered from the Sphinx manual.
 
-Two ways to avoid losing them, and they combine:
+The order this forces, when component discovery creates the components:
 
-1. **Upload each translation once, after creating the component.** In the
-   component, per language, *Files → Upload translation*, with the existing
-   `<lang>/documentation.md`. An explicit upload goes through the parser and does
-   populate Weblate, unlike a repository change.
-2. **Do not remove `doc-plugins-fullcard` until the new components are
-   populated.** Its strings feed the project translation memory, so translators
-   are offered the old wording as a full match instead of retyping it.
+1. **Create the discovery component.** It finds `*/index.md` and
+   `*/documentation.md` and creates one component per page — you do not create
+   them by hand, so there is no "upload first" option.
+2. **Expect Weblate to flatten the translated files.** Considering those
+   languages untranslated, its first write replaces each `<lang>/*.md` with its
+   own output, most likely through a pull request. This is not a loss: the
+   content stays in the branch history, so
+   `git show <commit>:de/documentation.md` gets any of them back.
+3. **Upload the translations, one file per language per component.** In each
+   component, per language, *Files → Upload translation*. An explicit upload goes
+   through the parser and does populate Weblate, unlike a repository change.
+4. **Weblate then opens a pull request** re-adding the files it now considers
+   translated.
+
+**Keep `doc-plugins-fullcard` until step 3 is done.** Its strings feed the project
+translation memory, so a translator is offered the old wording as a full match
+instead of retyping it — and it is the safety net if an upload goes wrong.
 
 Also worth knowing: Weblate labels this format's support as *under development*,
 with behaviour that may change between releases. Worth a check after a Weblate

@@ -195,8 +195,13 @@ mask.
 You rarely need to run this by hand: `.github/workflows/i18n.yml` regenerates and
 commits the includes whenever `i18n/strings/**`, `i18n/languages.yml` or
 `bin/build-i18n` changes on `main`, which is what keeps Weblate's translations
-flowing through without an add-on. Setting the Weblate components up is described
-in [WEBLATE.md](WEBLATE.md).
+flowing through without an add-on.
+
+Sites built on the theme are then asked to rebuild, since `remote_theme` is
+resolved at their build time and nothing else would tell them the theme moved.
+They are discovered by scanning the organisation, not kept in a list. Both are
+described in [WEBLATE.md](WEBLATE.md), including the token the cross-repository
+rebuild needs.
 
 Ten languages have their own strings; the nine others render the English ones
 until they are translated, while still declaring their own `lang` and text

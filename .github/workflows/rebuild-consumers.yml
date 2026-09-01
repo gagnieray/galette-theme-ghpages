@@ -1,0 +1,59 @@
+name: Rebuild consuming sites
+
+# A site using `remote_theme` downloads this repository when Pages builds it, so
+# it keeps serving the previous version of the theme until Pages builds it again.
+# Nothing triggers that on its own.
+#
+# The sites are discovered, not listed: bin/rebuild-consumers scans the
+# organisation for Pages sites whose configuration references this theme. A
+# hand-kept list went stale the day a plugin was transferred between
+# organisations and the day three more adopted the theme on a branch of their own.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_layouts/**'
+      - '_includes/**'
+      - '_sass/**'
+      - 'assets/**'
+  # The Regenerate i18n workflow commits _includes/ with GITHUB_TOKEN, and such a
+  # push starts no workflow — so the push trigger above never sees a translation
+  # update. Chaining off that run is what carries new strings to the sites.
+  workflow_run:
+    workflows: ['Regenerate i18n']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Discover the sites without rebuilding them'
+        type: boolean
+        default: false
+
+concurrency:
+  group: rebuild-consumers
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    name: Ask Pages to rebuild each consuming site
+    # workflow_run fires whatever the outcome, including a failed regeneration.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Rebuild every site built on this theme
+        env:
+          # GITHUB_TOKEN is minted for this repository alone and cannot act on
+          # another one, whatever permissions are declared here — so it can never
+          # rebuild a plugin site. This needs the Pages permission at write on the
+          # consuming repositories; an organisation secret covers them all.
+          GH_TOKEN: ${{ secrets.CONSUMER_PAGES_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: |
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::warning::CONSUMER_PAGES_TOKEN is not set, so no site was rebuilt. See WEBLATE.md."
+            exit 0
+          fi
+          ./bin/rebuild-consumers

@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# Asks GitHub Pages to rebuild every site built on this theme.
+#
+# `remote_theme` is resolved when a consuming site builds, so a site keeps
+# serving the previous version of the theme until Pages builds it again, and
+# nothing asks it to.
+#
+# Sites are discovered rather than listed: they are the repositories of the
+# organisation that have a Pages site whose configuration references this theme.
+# A hand-kept list went stale the day a plugin was transferred and the day three
+# more adopted the theme on a branch of their own.
+#
+#   THEME_ORG     organisation to scan          (default galette-plugins)
+#   THEME_SLUG    theme to look for in _config  (default galette/theme-ghpages)
+#   EXTRA_REPOS   newline list of owner/repo outside the organisation
+#   DRY_RUN       set to 1 to discover without rebuilding
+#
+# Needs a token with the Pages permission at write on the consuming
+# repositories; GITHUB_TOKEN cannot reach them, see WEBLATE.md.
+set -uo pipefail
+
+ORG="${THEME_ORG:-galette-plugins}"
+SLUG="${THEME_SLUG:-galette/theme-ghpages}"
+DRY_RUN="${DRY_RUN:-0}"
+
+log() { printf '%s\n' "$*"; }
+
+# Every non-archived repository: an archived one cannot be rebuilt anyway.
+repos=$(gh api "orgs/$ORG/repos?per_page=100" --paginate \
+          --jq '.[] | select(.archived == false) | .full_name') || {
+  log "::error::could not list the repositories of $ORG"
+  exit 1
+}
+
+if [ -n "${EXTRA_REPOS:-}" ]; then
+  repos=$(printf '%s\n%s\n' "$repos" "$EXTRA_REPOS")
+fi
+
+targets=()
+while read -r repo; do
+  repo="${repo%%#*}"
+  repo="${repo//[[:space:]]/}"
+  [ -z "$repo" ] && continue
+
+  # No Pages site: nothing to rebuild.
+  pages=$(gh api "repos/$repo/pages" 2>/dev/null) || continue
+  branch=$(printf '%s' "$pages" | jq -r '.source.branch // empty')
+  path=$(printf '%s' "$pages" | jq -r '.source.path // "/"')
+  [ -z "$branch" ] && continue
+
+  # The Pages source may be a subdirectory, so the config follows it.
+  config="_config.yml"
+  [ "$path" != "/" ] && config="${path#/}/_config.yml"
+
+  body=$(gh api "repos/$repo/contents/$config?ref=$branch" --jq '.content' 2>/dev/null \
+           | base64 -d 2>/dev/null) || continue
+
+  # Matching the slug, not a whole line: the theme may be pinned to a tag.
+  if printf '%s' "$body" | grep -q "remote_theme:.*$SLUG"; then
+    targets+=("$repo:$branch")
+  fi
+done <<< "$repos"
+
+if [ "${#targets[@]}" -eq 0 ]; then
+  log "::warning::no site in $ORG references $SLUG, so nothing was rebuilt"
+  exit 0
+fi
+
+log "${#targets[@]} site(s) built on $SLUG:"
+failed=0
+for target in "${targets[@]}"; do
+  repo="${target%%:*}"
+  branch="${target##*:}"
+  if [ "$DRY_RUN" = "1" ]; then
+    log "  $repo ($branch) -> would rebuild"
+    continue
+  fi
+  if status=$(gh api -X POST "repos/$repo/pages/builds" --jq '.status' 2>/tmp/rebuild-error); then
+    log "  $repo ($branch) -> $status"
+  else
+    log "::warning::$repo was not rebuilt: $(head -c 200 /tmp/rebuild-error)"
+    failed=$((failed + 1))
+  fi
+done
+
+# A site that cannot be rebuilt silently serves a stale theme, which is exactly
+# what this exists to prevent.
+if [ "$failed" -gt 0 ]; then
+  log "::error::$failed site(s) were not rebuilt"
+  exit 1
+fi
