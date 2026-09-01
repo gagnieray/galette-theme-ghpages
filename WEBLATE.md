@@ -151,7 +151,7 @@ Then, in *Manage → Settings*, under **File format parameters**:
 
 | Field | Value |
 | --- | --- |
-| Regular expression | `(?P<language>[a-z]{2,3}(?:_[A-Z]{2})?)/(?P<component>index\|documentation)\.md` |
+| Regular expression | see below |
 | File format | Markdown file |
 | Customize the component name | `Fullcard site: {{ component }}` |
 | Define the monolingual base filename | `{{ component }}.md` |
@@ -159,13 +159,30 @@ Then, in *Manage → Settings*, under **File format parameters**:
 | Clone add-ons from the main component | on |
 | Remove components for inexistent files | off, at least to start with |
 
-The language group is deliberately tight — two or three lowercase letters, with an
-optional `_XX` region — so it matches `fr`, `ota` and `pt_BR` but not a future
-`images/` directory. Weblate derives the file mask from it by replacing the
-language group with `*`, giving `*/index.md` and `*/documentation.md`.
+```
+(?P<language>nb_NO|pt_BR|ota|ar|br|ca|de|es|fr|it|oc|pt|ru|si|sl|ta|tr|uk)/(?P<component>[^/]+)\.md
+```
 
-The add-on runs on installation and after every repository update, so a page or a
-language added later needs nothing.
+**Loose on the page name, exact on the language**, and that asymmetry is the
+point. `[^/]+` picks up a page added later — an `installation.md` needs no change
+here. The language group cannot be loose in the same way: `[a-z]{2,3}` would take
+`doc/`, `img/`, `api/` and `css/` for languages and have Weblate create them, and
+those are ordinary directory names on a documentation site.
+
+Because the nineteen languages are a project constant, this expression is the
+same for every Galette plugin site — copy it as is. `en` is absent on purpose: it
+is the base file, at the root. Regenerate it from the theme's language table when
+Galette gains a language:
+
+```bash
+ruby -ryaml -e 'l = YAML.load_file("i18n/languages.yml").keys - ["en"]
+  puts "(?P<language>#{l.sort_by { |x| [-x.length, x] }.join("|")})/(?P<component>[^/]+)\\.md"'
+```
+
+Weblate derives the file mask by replacing the language group with `*`, giving
+`*/index.md` and `*/documentation.md` — and `*/installation.md` the day such a
+page appears. The add-on runs on installation and after every repository update,
+so a page or a language added later needs nothing.
 
 **File format parameters are not part of the add-on's configuration.** Cloning
 add-ons does not clone them, so check *Translate front matter values* and
