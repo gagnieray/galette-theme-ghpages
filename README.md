@@ -30,7 +30,7 @@ plugin:
   min_galette: "1.3.0"
 defaults:
   - scope: {path: ""}
-    values: {layout: default, lang: en}
+    values: {layout: default}
 ```
 
 Then set GitHub Pages to build from the `gh-pages` branch, root directory.
@@ -90,32 +90,41 @@ bug tracker and the source repository, then a Galette block.
 
 ### Pages and languages
 
-A page's front matter carries only a `ref` — stable across languages — and a
-`title`:
+A page's front matter carries only what a reader sees:
 
 ```yaml
 ---
-ref: doc          # home, doc, …
 title: Documentation
+description: Full member card as PDF
 ---
 ```
 
-The language comes from the file's directory through path-scoped `defaults`,
-never from the front matter. That is deliberate: it lets Weblate write
-translated Markdown without having to produce a correct `lang` key.
+Everything structural is derived. **The language is the first path segment**, when
+that segment is one of the languages in `i18n/languages.yml`; **translations of a
+page are the pages sharing its file name**.
 
 ```
-index.md               -> /                      lang: en   ref: home
-documentation.md       -> /documentation.html     lang: en   ref: doc
-fr/index.md            -> /fr/                    lang: fr   ref: home
-fr/documentation.md    -> /fr/documentation.html  lang: fr   ref: doc
+index.md               -> /                      en
+documentation.md       -> /documentation.html     en
+fr/index.md            -> /fr/                    fr, paired with index.md
+fr/documentation.md    -> /fr/documentation.html  fr, paired with documentation.md
 ```
 
-Pages sharing a `ref` appear in each other's language picker, and the menu keeps
-the reader inside their language, falling back to `default_lang` when a page has
-no translation. Add one `defaults` entry per published language, and never set
-`permalink` on a translated page — the URL comes from the path, so two languages
-cannot collide.
+So a site needs no `defaults` beyond the layout, and a translation Weblate adds
+appears on its own. Do **not** put `lang` in `defaults`: it would override the
+derivation for every page, translated ones included. And never set `permalink` on
+a translated page — the URL is what carries the language.
+
+This matters for Weblate: with *Translate front matter values* enabled, any key
+in the front matter is offered for translation. An identifier there would be
+handed to translators and flagged on every language by the format's strict-same
+check, so there is none. `title` and `description` are both legitimately
+translatable — `description` is the tagline in the header.
+
+The menu still needs to know which page is the home and which is the
+documentation: `index.md` and `documentation.md` by name, or an explicit `ref` of
+`home` or `doc` for a site that names them otherwise. Any other page is paired
+across languages all the same.
 
 The picker is a `<details>` disclosure: it shows the current language and folds
 the others away, which a flat list of nineteen could not do. Being native HTML

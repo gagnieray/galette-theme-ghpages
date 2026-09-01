@@ -1,0 +1,15 @@
+{%- comment -%}
+Resolves the language of any page from its URL, and assigns it to `derived_lang`.
+Usage: {% include page-lang.html url=some_page.url %}
+
+The current page's own language comes from i18n.html; this is for reasoning about
+*other* pages — pairing translations, and pointing the menu at the reader's
+language — which front matter cannot answer once `lang` is no longer written into
+it. `known_langs` comes from i18n.html, so include that first.
+{%- endcomment -%}
+{%- assign pl_parts = include.url | remove_first: '/' | split: '/' -%}
+{%- if known_langs contains pl_parts[0] -%}
+  {%- assign derived_lang = pl_parts[0] -%}
+{%- else -%}
+  {%- assign derived_lang = site.default_lang | default: 'en' -%}
+{%- endif -%}

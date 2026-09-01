@@ -7,10 +7,21 @@ Home and Documentation stay inside the current language and fall back on
 the repository and at galette.eu.
 {%- endcomment -%}
 {%- assign default_lang = site.default_lang | default: 'en' -%}
-{%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', cur_lang | first -%}
-{%- unless home_page -%}
-  {%- assign home_page = site.pages | where: 'ref', 'home' | where: 'lang', default_lang | first -%}
-{%- endunless -%}
+{%- comment -%}
+The reader's own language first, the default language as a fallback. A page's
+language comes from its directory, so it has to be derived per candidate rather
+than filtered on a front matter key.
+{%- endcomment -%}
+{%- assign home_page = nil -%}
+{%- assign home_fallback = nil -%}
+{%- for candidate in site.pages -%}
+  {%- if candidate.name == 'index.md' -%}
+    {%- include page-lang.html url=candidate.url -%}
+    {%- if derived_lang == cur_lang -%}{%- assign home_page = candidate -%}{%- endif -%}
+    {%- if derived_lang == default_lang -%}{%- assign home_fallback = candidate -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- unless home_page -%}{%- assign home_page = home_fallback -%}{%- endunless -%}
 {%- comment -%}
 A site that has not adopted `ref` yet — a bare README.md rendered as the index,
 say — still deserves a Home entry, so fall back on the site root.
@@ -20,10 +31,16 @@ say — still deserves a Home entry, so fall back on the site root.
 {%- else -%}
   {%- assign home_url = '/' | relative_url -%}
 {%- endif -%}
-{%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', cur_lang | first -%}
-{%- unless doc_page -%}
-  {%- assign doc_page = site.pages | where: 'ref', 'doc' | where: 'lang', default_lang | first -%}
-{%- endunless -%}
+{%- assign doc_page = nil -%}
+{%- assign doc_fallback = nil -%}
+{%- for candidate in site.pages -%}
+  {%- if candidate.name == 'documentation.md' -%}
+    {%- include page-lang.html url=candidate.url -%}
+    {%- if derived_lang == cur_lang -%}{%- assign doc_page = candidate -%}{%- endif -%}
+    {%- if derived_lang == default_lang -%}{%- assign doc_fallback = candidate -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- unless doc_page -%}{%- assign doc_page = doc_fallback -%}{%- endunless -%}
 {%- assign tracker_url = site.tracker_url | default: site.github.issues_url -%}
 <aside id="sidebar">
   <h2 class="mainmnulnk">{{ t_menu }}</h2>
@@ -42,9 +59,9 @@ say — still deserves a Home entry, so fall back on the site root.
         </span>
       </a>
       <ul>
-        <li{% if page.ref == 'home' %} class="active"{% endif %}><a href="{{ home_url }}">{{ t_nav_home }}</a></li>
+        <li{% if cur_ref == 'home' %} class="active"{% endif %}><a href="{{ home_url }}">{{ t_nav_home }}</a></li>
         {%- if doc_page %}
-        <li{% if page.ref == 'doc' %} class="active"{% endif %}><a href="{{ doc_page.url | relative_url }}">{{ t_nav_doc }}</a></li>
+        <li{% if cur_ref == 'doc' %} class="active"{% endif %}><a href="{{ doc_page.url | relative_url }}">{{ t_nav_doc }}</a></li>
         {%- endif %}
         {%- if tracker_url %}
         <li><a href="{{ tracker_url }}">{{ t_nav_tracker }}</a></li>

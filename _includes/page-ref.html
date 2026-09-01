@@ -1,0 +1,21 @@
+{%- comment -%}
+Resolves `cur_ref`, what pairs a page with its translations.
+
+It comes from the file name, so no page has to carry a `ref` in its front matter:
+with *Translate front matter values* enabled, Weblate would offer that identifier
+for translation and the format's strict-same check would flag it on every
+language. `title` and `description` are the only front matter left, and both are
+legitimately translatable.
+
+index.md becomes `home` and documentation.md becomes `doc`, the two the menu knows
+about; any other page keeps its own base name, which is enough for the language
+picker to pair its translations. An explicit `ref` still wins, for a site whose
+home or documentation page is named otherwise.
+{%- endcomment -%}
+{%- assign page_base = page.name | split: '.' | first -%}
+{%- case page_base -%}
+  {%- when 'index' -%}{%- assign derived_ref = 'home' -%}
+  {%- when 'documentation' -%}{%- assign derived_ref = 'doc' -%}
+  {%- else -%}{%- assign derived_ref = page_base -%}
+{%- endcase -%}
+{%- assign cur_ref = page.ref | default: derived_ref | default: '' -%}

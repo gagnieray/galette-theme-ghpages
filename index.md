@@ -25,7 +25,7 @@ plugin:
   min_galette: "1.3.0"
 defaults:
   - scope: {path: ""}
-    values: {layout: default, lang: en}
+    values: {layout: default}
 ```
 
 Then make sure GitHub Pages is set to build from the `gh-pages` branch, root
@@ -90,42 +90,36 @@ language, and has to be bumped in each of them at every release.
 
 ## Pages and languages
 
-A page declares two things in its front matter, and nothing more:
+A page's front matter carries only what a reader sees:
 
 ```yaml
 ---
-ref: doc          # stable across languages: home, doc, …
 title: Documentation
+description: Full member card as PDF
 ---
 ```
 
-The language comes from the file's directory, through path-scoped `defaults` —
-never from the front matter. That matters: it lets Weblate write translated
-Markdown files without ever having to produce a correct `lang` key.
+Everything structural is derived: **the language is the first path segment** when
+that segment is a language the theme knows, and **translations of a page are the
+pages sharing its file name**.
 
 ```
-index.md              -> /              lang: en   ref: home
-documentation.md      -> /documentation  lang: en   ref: doc
-fr/index.md           -> /fr/            lang: fr   ref: home
-fr/documentation.md   -> /fr/documentation  lang: fr  ref: doc
+index.md               -> /                      en
+documentation.md       -> /documentation.html     en
+fr/index.md            -> /fr/                    fr, paired with index.md
+fr/documentation.md    -> /fr/documentation.html  fr, paired with documentation.md
 ```
 
-Pages sharing a `ref` are offered to each other in the language picker — a
-`<details>` disclosure showing the current language and folding the others away,
-so it works with the keyboard and without JavaScript — and the menu keeps the
-reader inside their language. Declare one `defaults` entry per language you
-publish:
+A site therefore needs no `defaults` beyond the layout, and a translation added
+later appears on its own. Do **not** put `lang` in `defaults` — it would override
+the derivation for every page — and never set `permalink` on a translated page,
+since the URL is what carries the language.
 
-```yaml
-defaults:
-  - scope: {path: ""}
-    values: {layout: default, lang: en}
-  - scope: {path: "fr"}
-    values: {lang: fr}
-```
-
-Do **not** add `permalink` to a translated page: the URL comes from the path, so
-two languages can never collide on the same one.
+There is deliberately no identifier in the front matter: with Weblate's
+*Translate front matter values* enabled, one would be handed to translators and
+flagged on every language. The menu finds the home and documentation pages by
+file name, `index.md` and `documentation.md`, or by an explicit `ref` of `home` or
+`doc` for a site that names them otherwise.
 
 ## Adding a language to the interface
 

@@ -5,22 +5,21 @@ with JavaScript disabled; scripts.html only adds closing on Escape or an outside
 click. With nineteen languages in the project, a flat inline list would take the
 whole header.
 
-Pages of a same logical page share a `ref` and differ by their `lang`, which the
-consuming site sets through path-scoped `defaults` — so Weblate never has to
-write that key itself.
+Translations of a page are the pages sharing its file name — fr/documentation.md
+is the French documentation.md — so nothing has to be declared in front matter,
+which is what keeps Weblate from offering identifiers for translation. Their
+language comes from their directory, see page-lang.html.
 
-Two guards, both learned from a real site: a page without `ref` has no
-translations by definition, and `where: 'ref', nil` would otherwise match every
-other ref-less page; and a language is listed once even when several pages claim
-it, which is what a README.md rendered as the index alongside an index.md does.
+Two guards, both learned from a real site: a page whose name resolves to nothing
+is skipped, and a language is listed once even when several pages claim it, which
+is what a README.md rendered as the index alongside an index.md does.
 {%- endcomment -%}
-{%- assign cur_ref = page.ref | default: '' -%}
-{%- if cur_ref != '' -%}
-  {%- assign siblings = site.pages | where: 'ref', cur_ref | sort: 'lang' -%}
+{%- if page.name and page.name != '' -%}
+  {%- assign siblings = site.pages | where: 'name', page.name | sort: 'url' -%}
   {%- assign distinct = '' -%}
   {%- for sibling in siblings -%}
-    {%- assign sl = sibling.lang | default: 'en' -%}
-    {%- assign marker = '|' | append: sl | append: '|' -%}
+    {%- include page-lang.html url=sibling.url -%}
+    {%- assign marker = '|' | append: derived_lang | append: '|' -%}
     {%- unless distinct contains marker -%}
       {%- assign distinct = distinct | append: marker -%}
     {%- endunless -%}
@@ -39,7 +38,8 @@ it, which is what a README.md rendered as the index alongside an index.md does.
     <ul>
       {%- assign emitted = '' -%}
       {%- for sibling in siblings -%}
-        {%- assign sib_lang = sibling.lang | default: 'en' -%}
+        {%- include page-lang.html url=sibling.url -%}
+        {%- assign sib_lang = derived_lang -%}
         {%- assign marker = '|' | append: sib_lang | append: '|' -%}
         {%- unless emitted contains marker -%}
           {%- assign emitted = emitted | append: marker -%}

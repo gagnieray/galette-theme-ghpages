@@ -16,13 +16,12 @@ plugin:
 
 tracker_url: https://bugs.galette.eu/projects/galette
 
-# Demo pages live in demo/, one directory per language, so the language
-# selector and the per-language navigation are exercised locally.
+# No `lang` here on purpose: the theme takes it from the first path segment, and
+# a `lang` in the defaults would override that for every page — including the
+# translated ones.
 defaults:
   - scope: {path: ""}
-    values: {layout: default, lang: en}
-  - scope: {path: "fr"}
-    values: {lang: fr}
+    values: {layout: default}
 
 exclude:
   - WEBLATE.md

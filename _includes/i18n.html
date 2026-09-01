@@ -13,7 +13,23 @@ an unknown one, falls back on English.
 Liquid includes share the caller's scope, so every variable assigned below is
 usable in the layout right after `{% include i18n.html %}`.
 {%- endcomment -%}
-{%- assign cur_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- comment -%}
+The language comes from the first path segment when that segment is a known
+language, so a site needs no per-language `defaults` and a translation Weblate
+adds is picked up with no change to the plugin repository. An explicit page
+`lang` still wins.
+{%- endcomment -%}
+{%- assign known_langs = "ar,br,ca,de,en,es,fr,it,nb_NO,ota,oc,pt,pt_BR,ru,si,sl,ta,tr,uk" | split: ',' -%}
+{%- assign url_parts = page.url | remove_first: '/' | split: '/' -%}
+{%- comment -%}
+No need to check the depth: a page at the root has a file name as its first
+segment (documentation.html) or none at all, and neither can equal a language
+code — while /fr/ has a single segment and must still be recognised.
+{%- endcomment -%}
+{%- if known_langs contains url_parts[0] -%}
+  {%- assign path_lang = url_parts[0] -%}
+{%- endif -%}
+{%- assign cur_lang = page.lang | default: path_lang | default: site.default_lang | default: 'en' -%}
 {%- comment -%}
 Directory and Weblate codes use an underscore (pt_BR); HTML lang and hreflang
 need the BCP 47 form (pt-BR), or the markup is invalid.

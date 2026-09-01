@@ -160,29 +160,24 @@ Then, in *Manage → Settings*, under **File format parameters**:
 | Remove components for inexistent files | off, at least to start with |
 
 ```
-(?P<language>nb_NO|pt_BR|ota|ar|br|ca|de|es|fr|it|oc|pt|ru|si|sl|ta|tr|uk)/(?P<component>[^/]+)\.md
+(?P<language>[a-z]{2,3}(?:_[A-Z]{2})?)/(?P<component>[^/]+)\.md
 ```
 
-**Loose on the page name, exact on the language**, and that asymmetry is the
-point. `[^/]+` picks up a page added later — an `installation.md` needs no change
-here. The language group cannot be loose in the same way: `[a-z]{2,3}` would take
-`doc/`, `img/`, `api/` and `css/` for languages and have Weblate create them, and
-those are ordinary directory names on a documentation site.
-
-Because the nineteen languages are a project constant, this expression is the
-same for every Galette plugin site — copy it as is. `en` is absent on purpose: it
-is the base file, at the root. Regenerate it from the theme's language table when
-Galette gains a language:
-
-```bash
-ruby -ryaml -e 'l = YAML.load_file("i18n/languages.yml").keys - ["en"]
-  puts "(?P<language>#{l.sort_by { |x| [-x.length, x] }.join("|")})/(?P<component>[^/]+)\\.md"'
-```
+Both groups are open by shape, not by list: a page added later is picked up, and
+so is a language, which is the point — languages arrive on a translator's request,
+not on a release. The same expression fits every Galette plugin site.
 
 Weblate derives the file mask by replacing the language group with `*`, giving
 `*/index.md` and `*/documentation.md` — and `*/installation.md` the day such a
-page appears. The add-on runs on installation and after every repository update,
-so a page or a language added later needs nothing.
+page appears. The add-on runs on installation and after every repository update.
+
+`en` never matches: the English pages are the base files, at the root.
+
+**The one thing to watch**: a *two or three letter* directory holding a `.md`
+would be taken for a language — `doc/`, `img/`, `api/`, `css/` all fit the shape.
+`images/`, where the screenshots go, is too long to match, and that is the only
+such directory these sites have. If you ever add a short one, exclude it with a
+negative lookahead: `(?P<language>(?!doc|img)[a-z]{2,3}…`.
 
 **File format parameters are not part of the add-on's configuration.** Cloning
 add-ons does not clone them, so check *Translate front matter values* and
@@ -196,9 +191,10 @@ File format parameters, both components:
 * **Deduplicate identical strings** (`markdown_merge_duplicates`) — on. It keeps
   translations stable when a table row or a section moves.
 
-`ref` is in the front matter too and must not be translated: it is what pairs a
-page with its other languages. Mark it read-only, or tell translators to leave it
-alone.
+There is deliberately **no identifier in the front matter**: the theme derives the
+language from the directory and pairs a page with its translations by file name,
+so `title` and `description` are the only keys, and both are meant to be
+translated. Nothing here has to be marked read-only.
 
 ### The one trap that matters
 
