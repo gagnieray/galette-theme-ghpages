@@ -164,6 +164,18 @@ A release built by hand proves nothing about the workflow: it runs on a machine
 where `urlgrabber` happens to be installed, which is exactly how auto's missing
 dependency stayed invisible until the first Nightly.
 
+**A release published by hand does not rebuild the site.** Only the action asks
+for a Pages build, so a release created from the tarballs on galette.eu leaves
+the cartouche on its `releases/latest` fallback until the next build. Ask for one:
+
+```sh
+gh api -X POST repos/galette-plugins/plugin-maps/pages/builds
+```
+
+That is how maps came to advertise its 2.2.1 archive. And until a Nightly has
+run, the nightly button points at an asset that does not exist — a 404 the
+cartouche cannot know about, since it derives the URL from `archive`.
+
 **So dispatch *Nightly* first.** It runs the same action and the same script, and
 publishes into a rolling prerelease instead of a version — a failure costs
 nothing and shows up in about twenty seconds. Auto's second attempt produced
