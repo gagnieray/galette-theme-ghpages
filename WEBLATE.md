@@ -277,6 +277,31 @@ On auto that took the memory from 18 of 24 units to 21. The three left are the
 page description and the two download bullets, which have no old translation at
 all — and that is visible rather than guessed.
 
+**But first, know what "add new translation" does.** It copies the base file, so
+every unit of the new language immediately holds the **English source as its
+translation**, and the `same_edit` add-on then flags them as needing edit. Two
+consequences, both of which cost a detour on auto:
+
+* *Automatic translation* filtered on `state:empty` matches nothing — no unit is
+  empty. The API answers `no strings were updated` and looks like a memory
+  problem when it is not.
+* A script that skips units with a non-empty target skips every single one.
+
+This is also the mechanism behind trap 8: the English copy is what a first write
+pushes back to the repository, and what a later read records as the translation.
+
+**Writing the units directly, which is what worked.** With the catalogues already
+converted, `PATCH /api/units/{id}/` with `{"target": ["…"], "state": 20}` puts
+each translation where it belongs, and the condition to test is **whether the
+current target equals the source**, not whether it is empty. Units with no
+translation at all get `{"target": [""], "state": 0}` — untranslated is the
+truthful state, and it is what makes the gap visible.
+
+On auto: 21 of 24 units for seven languages, 19 for German, in about four
+minutes of API calls. Words that are identical in both languages —
+`Documentation`, `Installation` — stay flagged as needing edit, which is exactly
+what that add-on is for.
+
 **A prepared `<lang>/page.md`, only as a fallback.** A monolingual Markdown
 upload maps units by the file's structure, so every block has to be there,
 including the ones the catalogue never translated — and those carry the English
