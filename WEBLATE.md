@@ -251,7 +251,31 @@ plugin, imported in *Manage → Translation memory → Import*, then *Tools →
 Automatic translation* on each component with **Translation memory** as the
 source and a **100 %** threshold. It writes only the units it actually matches,
 so a unit the catalogue never covered simply stays untranslated — visibly, in the
-progress bar.
+progress bar. The import form asks for no language: `import_tmx` reads `srclang`
+from the header and every `<tuv xml:lang>` of each unit, and its two selectors
+are enforced only for `.xliff`, `.po` and `.csv`. One unknown code aborts the
+whole import, it is not skipped.
+
+**Build the memory against the units Weblate parsed, not against the file.** Two
+differences make a source that looks identical fail to match:
+
+* the Markdown parser replaces every link target with a positional placeholder,
+  so `[Club 404](https://…)` is `[Club 404]{1}` in the unit — a memory carrying
+  the URL matches nothing at 100 %, and the same conversion has to be applied to
+  the translations or Weblate writes a broken link;
+* the front matter `title` is a unit of its own that no documentation catalogue
+  ever held. It is in the theme's own strings, as `t_nav_doc`.
+
+So close the loop before importing: read the English units back and count the
+sources that match exactly.
+
+```sh
+curl -s -H @hdr '…/api/translations/galette/<component>/en/units/?page_size=100'
+```
+
+On auto that took the memory from 18 of 24 units to 21. The three left are the
+page description and the two download bullets, which have no old translation at
+all — and that is visible rather than guessed.
 
 **A prepared `<lang>/page.md`, only as a fallback.** A monolingual Markdown
 upload maps units by the file's structure, so every block has to be there,
