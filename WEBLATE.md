@@ -181,6 +181,13 @@ page appears. The add-on runs on installation and after every repository update.
 
 `en` never matches: the English pages are the base files, at the root.
 
+**The add-on discovers files, so it needs at least one language directory to
+exist.** A site published in English only — which is how a plugin now starts,
+since nothing hand-translated should be committed — gives it nothing to match,
+and no component is ever created. Create one component per page by hand instead;
+auto has two, `documentation` and `index`. Add the add-on later, when a third
+page or the first language directory exists, and it will pick the rest up.
+
 **The one thing to watch**: a *two or three letter* directory holding a `.md`
 would be taken for a language — `doc/`, `img/`, `api/`, `css/` all fit the shape.
 `images/`, where the screenshots go, is too long to match, and that is the only
@@ -233,6 +240,30 @@ The order this forces, when component discovery creates the components:
    through the parser and does populate Weblate, unlike a repository change.
 4. **Weblate then opens a pull request** re-adding the files it now considers
    translated.
+
+### Recovering the old catalogues, without recording English
+
+The Sphinx `.po` files hold the translations the manual accumulated. Two ways in,
+and they are not equivalent.
+
+**The translation memory, which is the one to use.** One multilingual TMX per
+plugin, imported in *Manage → Translation memory → Import*, then *Tools →
+Automatic translation* on each component with **Translation memory** as the
+source and a **100 %** threshold. It writes only the units it actually matches,
+so a unit the catalogue never covered simply stays untranslated — visibly, in the
+progress bar.
+
+**A prepared `<lang>/page.md`, only as a fallback.** A monolingual Markdown
+upload maps units by the file's structure, so every block has to be there,
+including the ones the catalogue never translated — and those carry the English
+source. Uploading such a file records English as that language's translation for
+each of them: trap 9 again, in miniature. Measured on auto: the best languages
+still carry two English units out of twenty-two, German five.
+
+So the order is: import the TMX, create the components, add the languages, run
+automatic translation, and only then consider uploading anything. If you do
+upload, clear what came in identical afterwards — filter the component on
+`check:same` and bulk-edit, which is also how the fullcard leftovers get cleaned.
 
 **Keep `doc-plugins-fullcard` until step 3 is done.** Its strings feed the project
 translation memory, so a translator is offered the old wording as a full match
