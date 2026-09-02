@@ -51,6 +51,8 @@ Every line here cost a round trip on fullcard, oauth2 or auto.
 | 12 | The Markdown format **does not read translations back** from the repository | upload them once, after the components exist |
 | 13 | The Pages source branch is not always `gh-pages` | stripe, legalnotices and helloasso publish from `gh-pages-galette-theme` |
 | 14 | `bin/release` predates the Actions pipeline on **every plugin still to migrate** — the workflows alone are not enough | auto's first Nightly died on `import urlgrabber.progress` |
+| 15 | The three CI conditions can each hold a **different** stale value, and the branch they name can be wrong too | oauth2 had `galette-oauth2` twice, `plugin-oauth2` once, and `master` where its branch is `main` |
+| 16 | Deleting an immutable release **burns its tag for good** — GitHub then refuses to create that ref at all | oauth2 cannot use the `nightly` tag and rolls on `dev` instead |
 
 ## 3. The procedure
 
@@ -64,6 +66,21 @@ different way, and the full matrix stops expanding.
 
 The checked-out path `plugin-auto` appears five more times in the same file and
 does **not** change: the repository keeps its name, only its owner moves.
+
+Read the three of them rather than replacing a pattern, because they do not
+always agree — oauth2 held two different repository names, and named `master`
+while its stable branch is `main`. Both branch names appear in the condition, so
+check them against the repository too:
+
+```sh
+grep -o "github\.repository [!=]= '[^']*'" .github/workflows/ci-linux.yml | sort | uniq -c
+grep -o 'refs/heads/[a-z]*' .github/workflows/ci-linux.yml | sort -u
+git ls-remote --heads origin master main
+```
+
+Measured on the five left: all three occurrences already say `plugin-<name>`, and
+the branches already match — `master` everywhere, `main` for activities. Only the
+organisation changes.
 
 ### Step 2 — transfer the repository
 
@@ -102,6 +119,22 @@ failed run rather than a degraded one.
 differs from it only by the copyright year and the plugin name. Diff them before
 dispatching anything.
 
+Two things in `release.yml` look wrong and are not, so do not "fix" them back:
+it checks out the **default branch** rather than the tag — `bin/release` archives
+the tag's tree with `git archive <tag>`, but the tooling doing it has to be the
+current one — and it asks for `pages: write`, because the plugin page reads the
+latest release and has to be rebuilt after one.
+
+The shared action has four inputs worth knowing, all with usable defaults:
+
+| Input | When it is needed | State of the five |
+|---|---|---|
+| `nightly-tag` | the default `nightly` tag is unusable, typically burnt by a deleted immutable release | not needed: none of them has a `nightly` or `dev` tag |
+| `nightly-branch` | the plugin's development branch is not `develop`, which `bin/release -n` reads | not needed: all six default to `develop` |
+| `php-version`, `php-extensions` | the plugin has a `composer.json` whose install needs a specific runtime | not needed: none of the five has one — only oauth2 does |
+| `dry-run` | build and upload an artifact, publish nothing | see the next step, the Nightly is a better rehearsal |
+
+
 Prove it locally rather than through a run — the action's own comment says
 `bin/release` ignores every subprocess exit code, so a broken build can still
 exit 0:
@@ -130,6 +163,13 @@ of *Release* is enough.
 A release built by hand proves nothing about the workflow: it runs on a machine
 where `urlgrabber` happens to be installed, which is exactly how auto's missing
 dependency stayed invisible until the first Nightly.
+
+**So dispatch *Nightly* first.** It runs the same action and the same script, and
+publishes into a rolling prerelease instead of a version — a failure costs
+nothing and shows up in about twenty seconds. Auto's second attempt produced
+exactly what the cartouche expects: a prerelease on the `nightly` tag carrying
+one asset, `galette-plugin-auto-dev.tar.bz2`. Dispatch *Release* only once that
+has passed.
 
 Check that pairing before dispatching, though. A version declared without a tag
 gives a page announcing a release nobody can download, which is the state
@@ -199,6 +239,11 @@ Two values are **read, never guessed**:
   178). `legalnotices` uses `galette-plugin-legal-notices`, so the repository name
   is not a reliable source.
 * `min_galette` is `compver` in `_define.php`.
+
+A third one only when step 3 had to override `nightly-tag`: the cartouche builds
+the nightly URL from the `nightly` tag, so a plugin rolling on another tag needs
+`plugin.nightly_url` spelt out or its nightly link points at an asset that does
+not exist. oauth2 is the only one so far.
 
 And do **not** add a `_layouts/` of your own: a local `_layouts/default.html`
 shadows the theme's, which is the one way to freeze a site on an old layout
@@ -366,6 +411,13 @@ Redmine project at all — either create one or point `tracker_url` at the gener
 
 **All five need database tables**, unlike fullcard. Their `documentation.md`
 keeps its *Database initialisation* section.
+
+Nothing on the release side needs a per-plugin decision, which is worth stating
+once: none of the five has a `composer.json`, so the runtime inputs stay on
+their defaults; none has a `nightly` or `dev` tag, so the rolling prerelease can
+use the default name; all six develop on `develop`. The `npm` ecosystem
+dependabot declares for maps and events is legitimate, both have a
+`package.json`.
 
 Documentation translation, from the `.po` catalogues:
 
