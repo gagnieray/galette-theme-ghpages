@@ -138,7 +138,7 @@ create the rest — it also picks up a page added later.
 | Monolingual base language file | `documentation.md` |
 | Template for new translations | `documentation.md` |
 | Source language | English |
-| License | GPL-3.0-only |
+| License | `CC-BY-SA-4.0` — the pages, unlike the theme, see `LICENSE.contents` |
 
 **In the creation form, before saving**, under **File format parameters** — not
 afterwards. Until *Translate front matter values* is on, the front matter is not
