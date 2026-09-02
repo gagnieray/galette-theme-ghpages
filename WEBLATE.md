@@ -1,5 +1,8 @@
 # Setting up Weblate for a Galette plugin site
 
+The whole migration of a plugin, of which this is one step, is in
+[MIGRATE_PLUGINS.md](MIGRATE_PLUGINS.md).
+
 Two kinds of component are involved: this theme's interface strings, and the page
 content of each plugin site. They use different file formats and behave
 differently, so they are described separately.
@@ -137,7 +140,12 @@ create the rest — it also picks up a page added later.
 | Source language | English |
 | License | GPL-3.0-only |
 
-Then, in *Manage → Settings*, under **File format parameters**:
+**In the creation form, before saving**, under **File format parameters** — not
+afterwards. Until *Translate front matter values* is on, the front matter is not
+a translatable unit, so Weblate's first write copies the source one over every
+language file and destroys every translated `title`. Enabling it later re-reads
+files that are English by then and records English as the translation, so the
+loss is silent. fullcard lost eight titles exactly this way.
 
 * **Translate front matter values** — on. The pages carry `title` and
   `description` in their front matter, and the tagline in the header comes from

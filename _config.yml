@@ -24,6 +24,7 @@ defaults:
     values: {layout: default}
 
 exclude:
+  - MIGRATE_PLUGINS.md
   - WEBLATE.md
   - bin
   - i18n

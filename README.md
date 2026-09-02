@@ -210,7 +210,8 @@ Sites built on the theme are then asked to rebuild, since `remote_theme` is
 resolved at their build time and nothing else would tell them the theme moved.
 They are discovered by scanning the organisation, not kept in a list. Both are
 described in [WEBLATE.md](WEBLATE.md), including the token the cross-repository
-rebuild needs.
+rebuild needs; moving a plugin onto the theme is
+[MIGRATE_PLUGINS.md](MIGRATE_PLUGINS.md).
 
 Ten languages have their own strings; the nine others render the English ones
 until they are translated, while still declaring their own `lang` and text
