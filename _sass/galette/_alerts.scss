@@ -1,0 +1,50 @@
+.admonition {
+    padding: 1em;
+    margin: .5em auto;
+    border-radius: 10px;
+    color: #000;
+}
+
+.admonition::after {
+    display: unset;
+    content: unset;
+}
+
+.admonition-todo {
+    background-color: rgba(255,255,0,0.5);
+}
+
+.admonition-note {
+    background-color: rgba(248, 195, 99, 0.5);
+}
+
+.admonition-warning {
+    background-color: rgba(255,0,0,0.5);
+}
+
+section#content .admonition p {
+    margin: 0;
+    text-align: center;
+}
+
+.admonition-title {
+    background-position: left top, right top;
+    background-repeat: no-repeat;
+    padding: .1em 0;
+    font-size: 1.3em;
+    font-weight: bold;
+
+    .admonition-todo & {
+        background-image: url('#{$assets-path}/images/todo.png'), url('#{$assets-path}/images/todo.png');
+    }
+
+    .admonition-note & {
+        background-image: url('#{$assets-path}/images/info.png'), url('#{$assets-path}/images/info.png');
+    }
+
+    .admonition-warning & {
+        background-image: url('#{$assets-path}/images/warning.png'), url('#{$assets-path}/images/warning.png');
+    }
+}
+
+

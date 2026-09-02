@@ -62,6 +62,14 @@ sideways — wrap them in `<div class="table-wrapper" markdown="1">`.
 
 </div>
 
+## Admonitions
+
+{% include alert.html type="todo" content="This is a todo" %}
+
+{% include alert.html type="note" content="This is a note" %}
+
+{% include alert.html type="warning" content="This is a warning" %}
+
 ## Horizontal rule
 
 ---
