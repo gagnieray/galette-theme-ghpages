@@ -72,9 +72,6 @@ main.wrapper {
     }
 
     .header-title {
-        /* The minimum Galette version sits on the title's baseline: it is the
-           first thing a visitor needs to know, so it belongs here rather than
-           in the column beside. */
         .title-line {
             display: flex;
             align-items: baseline;
@@ -96,13 +93,6 @@ main.wrapper {
         }
     }
 
-    .header-meta {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: .5em;
-    }
-
     /* The cartouche hugs the far edge of the header, whichever edge that is. */
     aside#galette {
         margin-inline-start: auto;
@@ -113,7 +103,7 @@ main.wrapper {
 section#content {
     grid-column: 1;
     grid-row: 2;
-    margin-top: 1.5em;
+    margin-top: 1.25em;
 }
 
 /** Maintainer pill. No background, so the text keeps the page's own contrast;
@@ -125,6 +115,7 @@ section#content {
     gap: .4em;
     font-size: $small-font-size;
     font-weight: 700;
+    margin-top: .7em;
     padding: .3em .7em;
     border-radius: 999px;
     white-space: nowrap;
@@ -142,12 +133,15 @@ section#content {
     }
 }
 
-/** Minimum Galette version, beside the maintainer pill */
+/** Minimum Galette version, at the bottom of the cartouche */
 .requires {
+    display: block;
     font-size: $small-font-size;
-    color: $galette-grey;
-    border-inline-start: 3px solid $galette-orange;
-    padding-inline-start: .5em;
+    color: $galette-dark-grey;
+    text-align: center;
+    border-bottom: 3px solid $galette-orange;
+    border-radius: 5px;
+    padding: .2em 0;
 }
 
 /** Language picker: a `<details>` disclosure, so it needs no JavaScript to

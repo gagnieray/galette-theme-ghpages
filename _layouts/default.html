@@ -11,7 +11,7 @@
           <div class="header-title">
             <div class="title-line">
               <h1>{{ site.title | default: site.github.repository_name }}</h1>
-              {%- include requires.html -%}
+              {%- include langselector.html -%}
             </div>
             {%- comment -%}
             A page may carry its own `description`, which is how a translated page
@@ -19,10 +19,7 @@
             never touches _config.yml.
             {%- endcomment -%}
             <p class="tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</p>
-          </div>
-          <div class="header-meta">
             {%- include maintainer.html -%}
-            {%- include langselector.html -%}
           </div>
         </div>
         {%- include download.html -%}

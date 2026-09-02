@@ -245,6 +245,8 @@ aside#galette {
             font-weight: 400;
             padding: .2em 1.3em;
             text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
 
             strong {
                 display: block;
@@ -256,9 +258,32 @@ aside#galette {
 }
 
 @media screen and (min-width: $galette-large) {
+    /** Prevent the cartouche from expanding excessively when the plugin
+        name is rather long. If the name is too long to fit within a cell,
+        the overflowing text is hidden with an ellipsis */
     aside#galette {
-        width: auto;
+        max-width: 350px;
         margin-left: 2em;
+
+        ul li {
+            max-width: 50%;
+        }
+    }
+
+    /** Remove the top margin from the first element in the content section
+        to align it with the content in the right sidebar. */
+    section#content {
+        h2,
+        p,
+        ul,
+        .admonition {
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+        .table-wrapper:first-child table {
+            margin-top: 0;
+        }
     }
 }
 
