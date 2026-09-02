@@ -291,15 +291,19 @@ for translation.
 
 Source: branch `gh-pages`, root `/`.
 
-Enabling it leaves HTTPS unenforced, so `http://` keeps serving the site in the
-clear even though every link to it is `https://`. Turn it on in the same pass:
+Enabling it leaves HTTPS unenforced, and that is not cosmetic: `http://` serves
+the site in the clear with a 200, while an enforced site answers 301. oauth2
+redirects, auto and fullcard do not.
+
+**Tick *Enforce HTTPS* in Settings → Pages.** The API cannot do it on a freshly
+enabled site — it answers `404 The certificate does not exist yet`, with or
+without `source` in the body, and a missing permission would be a 403 — so the
+checkbox is what creates that record. Check the result on the site itself rather
+than the flag:
 
 ```sh
-gh api -X PUT repos/galette-plugins/plugin-auto/pages -F https_enforced=true
-gh api repos/galette-plugins/plugin-auto/pages --jq '.https_enforced, .html_url'
+curl -sI http://galette-plugins.github.io/plugin-auto/ | head -1   # want a 301
 ```
-
-fullcard and auto are both still unenforced.
 
 ### Step 8 — repository metadata, and the local remote
 
