@@ -291,6 +291,16 @@ for translation.
 
 Source: branch `gh-pages`, root `/`.
 
+Enabling it leaves HTTPS unenforced, so `http://` keeps serving the site in the
+clear even though every link to it is `https://`. Turn it on in the same pass:
+
+```sh
+gh api -X PUT repos/galette-plugins/plugin-auto/pages -F https_enforced=true
+gh api repos/galette-plugins/plugin-auto/pages --jq '.https_enforced, .html_url'
+```
+
+fullcard and auto are both still unenforced.
+
 ### Step 8 — repository metadata, and the local remote
 
 ```bash
