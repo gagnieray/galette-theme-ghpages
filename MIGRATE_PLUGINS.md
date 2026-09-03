@@ -164,6 +164,23 @@ A release built by hand proves nothing about the workflow: it runs on a machine
 where `urlgrabber` happens to be installed, which is exactly how auto's missing
 dependency stayed invisible until the first Nightly.
 
+**Publish through the workflow, not by hand.** `Release` takes a tag and a
+`dry-run` flag that defaults to **true**, so a first dispatch builds the archive
+and publishes nothing — the cheapest possible rehearsal of the release path,
+including the `--no-sign` flag. Then dispatch it for real, **oldest version
+first**, so the newest ends up flagged Latest:
+
+```sh
+gh workflow run Release --repo galette-plugins/plugin-objectslend --ref develop \
+  -f version=2.2.1 -f dry-run=true      # rehearsal
+gh workflow run Release --repo galette-plugins/plugin-objectslend --ref develop \
+  -f version=2.2.0 -f dry-run=false     # then 2.2.1
+```
+
+Done that way the archive carries a build attestation, and the action asks for
+the Pages build itself: objectslend's cartouche went from 2.2.0 to 2.2.1 with no
+intervention.
+
 **A release published by hand does not rebuild the site.** Only the action asks
 for a Pages build, so a release created from the tarballs on galette.eu leaves
 the cartouche on its `releases/latest` fallback until the next build. Ask for one:
