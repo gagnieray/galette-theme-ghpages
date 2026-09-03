@@ -206,6 +206,12 @@ File format parameters, both components:
 * **Deduplicate identical strings** (`markdown_merge_duplicates`) — on. It keeps
   translations stable when a table row or a section moves.
 
+One thing to weigh before using the theme's admonitions: `{% include
+alert.html type="warning" content="…" %}` becomes **one unit carrying the whole
+Liquid tag**, so a translator edits the tag itself and a stray quote or a dropped
+`%}` fails the Pages build. A blockquote, which the theme also styles, keeps the
+translatable text clean at the cost of the coloured box.
+
 There is deliberately **no identifier in the front matter**: the theme derives the
 language from the directory and pairs a page with its translations by file name,
 so `title` and `description` are the only keys, and both are meant to be
@@ -240,6 +246,22 @@ The order this forces, when component discovery creates the components:
    through the parser and does populate Weblate, unlike a repository change.
 4. **Weblate then opens a pull request** re-adding the files it now considers
    translated.
+
+### Let the component settle before writing to it
+
+Creating or updating a component starts a chain of background jobs, and Weblate
+**locks the component** while they run. Anything else is refused with `423
+Locked` — adding a language included, which is how three of maps' eleven
+silently failed to be created. Wait for the lock instead of retrying:
+
+```sh
+curl -s -H @hdr https://hosted.weblate.org/api/components/galette/<slug>/lock/
+```
+
+A linked component has its own lock, so check both. The English units appear only
+once that first scan is done: until then the component reports zero strings and
+looks broken. A `POST /repository/` with `{"operation": "pull"}` brings the scan
+forward once the lock is clear.
 
 ### Recovering the old catalogues, without recording English
 
