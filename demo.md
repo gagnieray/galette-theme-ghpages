@@ -96,15 +96,7 @@ A quotation that merely contains bold text stays a quotation — which is why th
 test lives in the script and not in a CSS `:has()`, where `:first-child` would
 match this one too:
 
-> Ceci est une citation ordinaire, **avec du gras** au milieu.
-
-The `alert.html` include is still there for a page no translator touches:
-
-{% include alert.html type="todo" content="This is a todo" %}
-
-{% include alert.html type="note" content="This is a note" %}
-
-{% include alert.html type="warning" content="This is a warning" %}
+> This is an ordinary quote, **with bold text** in the middle.
 
 ## Horizontal rule
 
