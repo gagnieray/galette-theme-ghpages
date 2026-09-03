@@ -238,6 +238,23 @@ gem (Jekyll 3.9, jekyll-sass-converter 1.5, Ruby Sass 3). That toolchain is why
 everything under `_sass/` uses `@import` and not `@use`: `@use` builds fine on a
 modern Sass and then fails on GitHub Pages.
 
+**On Ruby 3.2 and later that build fails**, and the failure has nothing to do
+with the theme: the `liquid` 4.0.3 that `github-pages` pins calls `tainted?`,
+which Ruby removed. Restore it for the run rather than reaching for a newer
+Jekyll:
+
+```bash
+echo 'class Object; def tainted?; false; end; def untaint; self; end; end' > /tmp/untaint.rb
+RUBYOPT="-r/tmp/untaint.rb" bundle exec jekyll build
+```
+
+Worth the detour, because a newer Jekyll is **not** a stand-in. It loads none of
+the plugins `github-pages` brings, and one of them rewrites what the pages
+contain: `jekyll-relative-links` turns `![alt](images/x.png)` into a
+baseurl-aware absolute path, which is what puts a consuming site's images under
+`/plugin-maps/`. A CI assertion written against a plain Jekyll build once passed
+locally and failed on Pages for exactly that reason.
+
 Asset URLs in the SCSS are relative to the compiled stylesheet
 (`../images/bg.png`, not `/site/assets/images/bg.png` as on galette.eu), so the
 theme works under any `baseurl`.

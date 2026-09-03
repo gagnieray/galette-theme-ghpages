@@ -7,9 +7,12 @@ source "https://rubygems.org"
 
 gem "github-pages", group: :jekyll_plugins
 
-# Ruby 3.4+ no longer ships these as default gems, and Jekyll 3.9 predates that.
+# Ruby no longer ships these as default gems, and Jekyll 3.9 predates that.
+# webrick left in Ruby 3.0, the rest in 3.4; without it `jekyll serve` cannot
+# start at all, which is what script/server runs.
 gem "base64"
 gem "bigdecimal"
 gem "csv"
 gem "logger"
 gem "ostruct"
+gem "webrick"

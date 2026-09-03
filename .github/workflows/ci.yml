@@ -130,7 +130,12 @@ jobs:
           grep -q 'dialog.lightbox' _site/assets/css/style.css
           # Two screenshots and the logo: the demo has to carry content images at
           # all, which it did not until the viewer needed something to open.
-          test "$(grep -o 'src="assets/images/' _site/demo.html | wc -l)" -ge 3
+          # Matched inside the src and not from its start, because
+          # jekyll-relative-links — one of the plugins github-pages loads — turns
+          # `assets/images/x.png` into a baseurl-aware absolute path. That is what
+          # puts consuming sites' images under /plugin-maps/, and it is also why a
+          # local build without that plugin is no proof of what Pages emits.
+          test "$(grep -oE '<img[^>]+src=\"[^\"]*assets/images/' _site/demo.html | wc -l)" -ge 3
 
       - name: Check the language picker links the translated page
         run: |
