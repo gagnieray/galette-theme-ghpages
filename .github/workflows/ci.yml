@@ -135,7 +135,7 @@ jobs:
           # `assets/images/x.png` into a baseurl-aware absolute path. That is what
           # puts consuming sites' images under /plugin-maps/, and it is also why a
           # local build without that plugin is no proof of what Pages emits.
-          test "$(grep -oE '<img[^>]+src=\"[^\"]*assets/images/' _site/demo.html | wc -l)" -ge 3
+          test "$(grep -oE '<img[^>]+src="[^"]*assets/images/' _site/demo.html | wc -l)" -ge 3
 
       - name: Check the language picker links the translated page
         run: |
