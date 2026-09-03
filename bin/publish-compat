@@ -1,0 +1,204 @@
+#!/usr/bin/env bash
+# Backfills _data/galette.yml on the Pages branch of every site built on this
+# theme, so its download cartouche gives a compatibility verdict now rather than
+# at the plugin's next release.
+#
+# galette/.github/actions/release-plugin writes that file at each release, which
+# is where it belongs. This exists because a site adopting the theme, or a
+# release published before the action learnt to write it, shows the unverified
+# fallback until then — a neutral pill on a plugin that is in fact compatible.
+#
+# It is NOT wired to a workflow, deliberately: it needs contents:write on three
+# organisations, and CONSUMER_PAGES_TOKEN carries only `pages` by choice. Run it
+# with your own gh authentication.
+#
+# Sites are discovered, not listed, exactly as bin/rebuild-consumers does them.
+# A site is written to only when all of this holds:
+#
+#   * it publishes GitHub Pages from a branch;
+#   * that branch's _config.yml references this theme;
+#   * the repository is in the release flow, i.e. it carries a release workflow
+#     delegating to release-plugin. A plugin published by hand is left alone —
+#     its `plugin.min_galette` may say something no tag can, such as stripe's
+#     "nightly", and an unverified value is shown without a verdict on purpose;
+#   * it has a published release to read a tag from.
+#
+#   THEME_ORGS    organisations to scan   (default: the two holding plugins)
+#   THEME_SLUG    theme to look for       (default galette/theme-ghpages)
+#   EXTRA_REPOS   newline list of owner/repo to add
+#   READER        path to read-define.php (default: fetched from galette/.github)
+#   DRY_RUN       set to 1 to report without writing
+set -uo pipefail
+
+ORGS="${THEME_ORGS:-galette-plugins galette}"
+SLUG="${THEME_SLUG:-galette/theme-ghpages}"
+DRY_RUN="${DRY_RUN:-0}"
+
+log() { printf '%s\n' "$*"; }
+
+# The one way to read a _define.php, rather than a second regex living here.
+reader="${READER:-}"
+if [ -z "$reader" ]; then
+  reader=$(mktemp) || exit 1
+  trap 'rm -f "$reader"' EXIT
+  gh api repos/galette/.github/contents/actions/release-plugin/read-define.php \
+    --jq '.content' 2>/dev/null | base64 -d > "$reader" || {
+    log "::error::could not fetch read-define.php from galette/.github"
+    exit 1
+  }
+fi
+if ! php -l "$reader" >/dev/null 2>&1; then
+  log "::error::${reader} is not valid PHP"
+  exit 1
+fi
+
+repos=''
+for org in $ORGS; do
+  found=$(gh api "orgs/$org/repos?per_page=100" --paginate \
+            --jq '.[] | select(.archived == false) | .full_name' 2>/dev/null) || {
+    log "::warning::could not list the repositories of $org, skipping it"
+    continue
+  }
+  repos=$(printf '%s\n%s' "$repos" "$found")
+done
+[ -n "${EXTRA_REPOS:-}" ] && repos=$(printf '%s\n%s' "$repos" "$EXTRA_REPOS")
+
+written=0
+skipped=0
+failed=0
+unchanged=0
+
+while read -r repo; do
+  repo="${repo%%#*}"
+  repo="${repo//[[:space:]]/}"
+  [ -z "$repo" ] && continue
+
+  pages=$(gh api "repos/$repo/pages" 2>/dev/null) || continue
+  branch=$(printf '%s' "$pages" | jq -r '.source.branch // empty')
+  dir=$(printf '%s' "$pages" | jq -r '.source.path // "/"')
+  [ -z "$branch" ] && continue
+  prefix=''
+  [ "$dir" != "/" ] && prefix="${dir#/}/"
+
+  config=$(gh api "repos/$repo/contents/${prefix}_config.yml?ref=$branch" --jq '.content' 2>/dev/null \
+             | base64 -d 2>/dev/null) || continue
+  printf '%s' "$config" | grep -q "remote_theme:.*$SLUG" || continue
+
+  # Published by hand: its configured value may be the only truthful one.
+  flow=$(gh api "repos/$repo/contents/.github/workflows/release.yml" --jq '.content' 2>/dev/null \
+           | base64 -d 2>/dev/null)
+  if ! printf '%s' "${flow:-}" | grep -q 'release-plugin'; then
+    log "  $repo — not in the release flow, left with its configured value"
+    skipped=$((skipped + 1))
+    continue
+  fi
+
+  tag=$(gh api "repos/$repo/releases/latest" --jq '.tag_name' 2>/dev/null)
+  if [ -z "${tag:-}" ]; then
+    log "  $repo — no published release to read a tag from"
+    skipped=$((skipped + 1))
+    continue
+  fi
+
+  define=$(gh api "repos/$repo/contents/_define.php?ref=$tag" --jq '.content' 2>/dev/null \
+             | base64 -d 2>/dev/null)
+  if [ -z "${define:-}" ]; then
+    log "::warning::$repo — no _define.php at $tag"
+    failed=$((failed + 1))
+    continue
+  fi
+  tmp=$(mktemp) && printf '%s' "$define" > "$tmp"
+  compver=$(php "$reader" "$tmp" 2>/dev/null | jq -r '.compver // empty')
+  rm -f "$tmp"
+  if [ -z "${compver:-}" ]; then
+    log "::warning::$repo — _define.php at $tag declares no compver"
+    failed=$((failed + 1))
+    continue
+  fi
+
+  series=$(printf '%s' "$compver" | cut -d. -f1,2)
+  rank=$(printf '%s' "$compver" | awk -F. '{printf "%d", $1 * 1000000 + $2 * 1000 + $3}')
+
+  # Byte-for-byte what the action writes, trailing newline included, so its
+  # own "nothing to commit" check holds at the next release. Built in a file
+  # rather than a variable for exactly that reason: $(...) eats the newline.
+  out=$(mktemp)
+  printf '%s\n' \
+    '# GENERATED at each release by galette/.github/actions/release-plugin, from' \
+    '# `compver` in _define.php at the released tag. Do not edit it: the next' \
+    '# release overwrites it.' \
+    '#' \
+    '# `compver` is the Galette generation this release targets, not a floor with' \
+    '# no ceiling: Galette disables a plugin whose compver is lower than its own' \
+    "# GALETTE_COMPAT_VERSION. So the page reads \"Compatible Galette ${series}\"," \
+    '# and the generation after that one refuses this release.' \
+    '#' \
+    '# `release` is what the theme checks the rest against: it ignores these' \
+    '# values unless they describe the release the download cartouche names.' \
+    '#' \
+    '# `rank` is compver packed into an integer, because Liquid has no version' \
+    '# comparison. The page shows a verdict only on a value it can rank, so an' \
+    '# unrankable compver is published without one rather than judged wrongly.' \
+    "release: \"${tag}\"" \
+    "compver: \"${compver}\"" \
+    "series: \"${series}\"" > "$out"
+  if [ -n "$rank" ] && [ "$rank" != "0" ]; then
+    printf 'rank: %s\n' "$rank" >> "$out"
+  fi
+  body=$(cat "$out")
+
+  path="${prefix}_data/galette.yml"
+  # Compared as bytes, not as shell strings: $(...) eats trailing newlines on
+  # both sides, which is exactly the difference this has to be able to see. An
+  # absent file leaves the temporary empty, which differs, which is right.
+  current=$(mktemp)
+  gh api "repos/$repo/contents/$path?ref=$branch" --jq '.content' 2>/dev/null \
+    | base64 -d > "$current" 2>/dev/null
+  if cmp -s "$current" "$out"; then
+    log "  $repo ($branch) — already Galette $series for $tag"
+    rm -f "$out" "$current"
+    unchanged=$((unchanged + 1))
+    continue
+  fi
+
+  if [ "$DRY_RUN" = "1" ]; then
+    replacing=''
+    [ -s "$current" ] && replacing=' (replacing an older file)'
+    log "  $repo ($branch) — would write Galette $series for $tag${replacing}"
+    rm -f "$out" "$current"
+    written=$((written + 1))
+    continue
+  fi
+
+  args=(-f "message=Name the Galette version ${tag} targets"
+        -f "content=$(base64 -w0 < "$out")"
+        -f "branch=${branch}")
+  sha=$(gh api "repos/$repo/contents/$path?ref=$branch" --jq '.sha' 2>/dev/null)
+  [ -n "${sha:-}" ] && args+=(-f "sha=${sha}")
+  if ! gh api --method PUT "repos/$repo/contents/$path" "${args[@]}" --silent; then
+    log "::warning::$repo — could not write $path on $branch, see the error above"
+    rm -f "$out" "$current"
+    failed=$((failed + 1))
+    continue
+  fi
+  # Asked for even though a personal token, unlike GITHUB_TOKEN, does start the
+  # branch's own Pages build: that is what makes this work when run under a token
+  # that does not. The cost is a duplicate — the build history then shows a pair
+  # at the same second, one built and one "errored", the loser of the race. That
+  # errored twin is expected and means nothing; look at the page, or at whether
+  # any build of the pair succeeded.
+  gh api --method POST "repos/$repo/pages/builds" --silent 2>/dev/null \
+    || log "::warning::$repo — written, but no Pages build could be requested"
+  rm -f "$out" "$current"
+  log "  $repo ($branch) — Galette $series for $tag"
+  written=$((written + 1))
+done <<< "$repos"
+
+log ''
+if [ "$DRY_RUN" = "1" ]; then
+  log "$written to write, $unchanged already current, $skipped left alone, $failed unreadable"
+else
+  log "$written written, $unchanged already current, $skipped left alone, $failed failed"
+fi
+[ "$failed" -gt 0 ] && exit 1
+exit 0
