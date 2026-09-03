@@ -325,10 +325,12 @@ deleting the page would break the changelog build.
   ``` ``x`` ``` → `` `x` ``, ``` `text <url>`_ ``` → `[text](url)`, and the
   default role ``` `x` ``` → `` `x` `` since it only ever wraps technical
   literals here. **Read every generated file** — see trap 7.
-* Images: **reuse the `:alt:` the RST already carries.** Sphinx extracts it, so it
-  is a string with translations waiting; alt text invented for the Markdown is a
-  new string with none. paypal has one per screenshot — maps, auto and
-  objectslend do not, which is why their alt text costs fresh strings.
+* Images: **the alt text is a new string whatever you write.** Sphinx does extract
+  the RST `:alt:`, so reusing it looks free — but Weblate's unit for an image is
+  the whole `![alt]{1}`, placeholder included, and the catalogue holds the bare
+  sentence. They never match. Measured on paypal, whose three screenshots carry
+  an `:alt:`: all three came out uncovered anyway. Write alt text that reads well
+  and accept the cost.
 * Front matter is **`title` and `description` only**. No identifier, no `lang`:
   with Weblate's *Translate front matter values* enabled, anything else there is
   handed to translators.
