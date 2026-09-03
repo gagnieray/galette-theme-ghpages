@@ -80,15 +80,17 @@ nightly requires a nightly.
 <aside id="galette" aria-label="{{ t_nav_download }}">
   <ul>
     {%- if release_url %}
-    <li><a href="{{ release_url }}">{{ dl_name }} <strong>{{ dl_version | default: t_latest }}</strong></a></li>
+    <li>
+      <a href="{{ release_url }}">{{ dl_name }} <strong>{{ dl_version | default: t_latest }}</strong></a>
+      {%- if release_url %}{% include requires.html label=compat_label rank=compat_rank %}{% endif -%}
+    </li>
     {%- endif %}
     {%- if nightly_url %}
-    <li><a href="{{ nightly_url }}">{{ dl_name }} <strong>nightly</strong></a></li>
+    <li>
+      <a href="{{ nightly_url }}">{{ dl_name }} <strong>nightly</strong></a>
+      {%- if nightly_url %}{% include requires.html label='nightly' %}{% endif -%}
+    </li>
     {%- endif %}
   </ul>
-  <p class="requires">
-    {%- if release_url %}{% include requires.html label=compat_label rank=compat_rank %}{% endif -%}
-    {%- if nightly_url %}{% include requires.html label='nightly' %}{% endif -%}
-  </p>
 </aside>
 {%- endif -%}

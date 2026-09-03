@@ -211,47 +211,96 @@ aside#galette {
         margin: 0;
         padding: 0;
         list-style: none;
-        background: $galette-orange;
-        border-radius: 5px;
-        box-shadow: inset rgba(#fff, 0.45) 0 1px 0, inset rgba(#000, 0.2) 0 -1px 0;
         display: flex;
         flex-wrap: wrap;
 
         li {
+            display: flex;
             flex: 1;
-            border-right: 1px solid $galette-dark-orange;
-            border-left: 1px solid $galette-light-orange;
+            flex-direction: column;
 
-            &:hover {
+            a:hover {
                 background-color: $galette-dark-orange;
             }
 
             &:first-child {
-                border-left: none;
-                border-radius: 5px 0 0 5px;
+                a {
+                    border-right: 1px solid $galette-dark-orange;
+                    border-radius: 5px 0 0 5px;
+                }
+
+                .compat {
+                    border-right: 1px solid $galette-medium-grey;
+                    border-bottom-right-radius: 0;
+                }
             }
 
             &:last-child {
-                border-right: none;
-                border-radius: 0 5px 5px 0;
+                a {
+                    border-left: 1px solid $galette-light-orange;
+                    border-radius: 0 5px 5px 0;
+                }
+
+                .compat {
+                    border-left: 1px solid $galette-lighter-grey;
+                    border-bottom-left-radius: 0;
+                }
+            }
+
+            &:only-child {
+                a {
+                    border: 0;
+                    border-radius: 5px;
+                }
+
+                .compat {
+                    border-left: 0;
+                    border-right: 0;
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                }
             }
         }
 
         a {
-            white-space: nowrap;
+            background: $galette-orange;
+            border-radius: 5px;
+            box-shadow: inset rgba(#fff, 0.45) 0 1px 0, inset rgba(#000, 0.2) 0 -1px 0;
             color: $galette-dark-grey;
             display: block;
             text-align: center;
             font-weight: 400;
             padding: .2em 1.3em;
             text-decoration: none;
-            overflow: hidden;
-            text-overflow: ellipsis;
 
             strong {
                 display: block;
                 font-size: $big-font-size;
                 -webkit-font-smoothing: antialiased;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $galette-small) {
+    aside#galette ul {
+        flex-direction: column;
+
+        li {
+            &:not(:only-child):first-child {
+                margin-bottom: .5em;
+            }
+
+            a:is(:first-child, :last-child) {
+                border: 0;
+                border-radius: 5px;
+            }
+
+            &:is(:first-child, :last-child) .compat {
+                border-left: 0;
+                border-right: 0;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
             }
         }
     }
@@ -265,9 +314,16 @@ aside#galette {
         max-width: 350px;
         margin-left: 2em;
 
-        ul li,
-        .requires > span {
+        ul {
+          li:not(:only-child) {
             max-width: 50%;
+          }
+
+          a {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
     }
 

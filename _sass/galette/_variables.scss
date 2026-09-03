@@ -29,7 +29,9 @@ $galette-orange:       #ffb619 !default;
 $galette-light-orange: lighten($galette-orange, 20%) !default;
 $galette-dark-orange:  darken($galette-orange, 10%) !default;
 $galette-grey:         #636B70 !default;
+$galette-lighter-grey: #fbfbfb !default;
 $galette-light-grey:   #e5e5e5 !default;
+$galette-medium-grey:  #c4c4c4 !default;
 $galette-dark-grey:    #242424 !default;
 $galette-blue:         #007baa !default;
 $galette-dark-blue:    darken($galette-blue, 10%) !default;
@@ -51,6 +53,7 @@ $action-color:      $galette-blue !default;
 
 $galette-max-width: 1024px !default;
 
+$galette-small:      360px !default;
 $galette-large:      767px !default;
 
 // Assets are referenced relatively to the compiled stylesheet
