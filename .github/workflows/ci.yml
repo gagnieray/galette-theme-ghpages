@@ -110,6 +110,17 @@ jobs:
           grep -q ">Compatible Galette ${min}</span>" _site-nodata/index.html
           ! grep -q 'compat-ok\|compat-stale' _site-nodata/index.html
 
+      # The classifier itself runs in the browser, so what CI can check is that
+      # the page carries the word lists and the styles they key on — and that no
+      # `:has()` rule crept back in to draw the box, since `:first-child` counts
+      # elements and would box any quotation with bold text in the middle.
+      - name: Check blockquote admonitions are wired
+        run: |
+          grep -q "'admonition-'" _site/demo.html
+          grep -q 'blockquote.admonition' _site/assets/css/style.css
+          ! grep -oE 'blockquote:has\([^)]*\) *\{' _site/assets/css/style.css
+          test "$(grep -o '<blockquote>' _site/demo.html | wc -l)" -ge 5
+
       - name: Check the language picker links the translated page
         run: |
           grep -q 'details class="langpicker"' _site/demo.html

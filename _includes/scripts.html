@@ -26,6 +26,47 @@
     window.addEventListener('resize', mark);
   })();
 
+  /* Admonitions, written as a blockquote whose first word is bold:
+
+       > **Warning** — check the usage policy of the provider you choose.
+
+     Which is all an author writes. Liquid is out of the question in a page
+     Weblate rewrites — a tag broken by a translation fails the whole build — and
+     GitHub's own `> [!WARNING]` is a github.com renderer feature that kramdown,
+     which is what builds these pages, leaves as the literal text `[!WARNING]`.
+
+     The type comes from that bold word, matched against every language the theme
+     knows, because the word is part of the translated paragraph: the French pages
+     already say `**Avertissement**`. A word no catalogue lists still gets a box,
+     just a neutral one, so a translation nobody anticipated degrades rather than
+     breaks. The box itself needs no JavaScript — CSS `:has()` draws it — and this
+     only adds the colour. */
+  (function () {
+    var types = [
+      ['warning', {{ adm_warning_words | jsonify }}],
+      ['note', {{ adm_note_words | jsonify }}],
+      ['todo', {{ adm_todo_words | jsonify }}]
+    ];
+    var quotes = document.querySelectorAll('#content blockquote');
+    for (var i = 0; i < quotes.length; i++) {
+      var quote = quotes[i];
+      var para = quote.querySelector('p');
+      if (!para) continue;
+      /* The bold run has to open the paragraph: a quotation that merely happens
+         to contain bold text is not an admonition. */
+      var lead = para.firstChild;
+      if (!lead || lead.nodeName !== 'STRONG') continue;
+      quote.classList.add('admonition');
+      var word = lead.textContent.trim().toLowerCase().replace(/[\s:.!?—–-]+$/, '');
+      for (var t = 0; t < types.length; t++) {
+        if (types[t][1].indexOf(word) !== -1) {
+          quote.classList.add('admonition-' + types[t][0]);
+          break;
+        }
+      }
+    }
+  })();
+
   /* The language picker is a <details>, so it already opens, closes and takes
      the keyboard on its own. This only adds what <details> does not do:
      dismissing it with Escape or a click elsewhere. */

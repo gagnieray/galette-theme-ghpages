@@ -19,3 +19,6 @@ t_galette_website: Site web de Galette
 t_galette_doc: Documentation de Galette
 t_latest: dernière
 t_languages: Langues
+t_adm_note: Note
+t_adm_warning: Avertissement
+t_adm_todo: À faire

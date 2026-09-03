@@ -38,6 +38,10 @@ $galette-dark-blue:    darken($galette-blue, 10%) !default;
    It is never the only cue either — an icon carries the same distinction. */
 $galette-compat-ok:    #1c7430 !default;
 $galette-compat-stale: #b3261e !default;
+/* Admonition fills, translucent so they sit on any background. */
+$galette-adm-todo:     rgba(255, 255, 0, 0.5) !default;
+$galette-adm-note:     rgba(248, 195, 99, 0.5) !default;
+$galette-adm-warning:  rgba(255, 0, 0, 0.5) !default;
 
 $text-color:        #606060 !default;
 $light-text-color:  #fff !default;

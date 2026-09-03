@@ -107,6 +107,37 @@ anything. `compver` is a *generation*, not an open floor:
 than the running Galette's `GALETTE_COMPAT_VERSION`, and imposes no upper bound.
 
 
+### Admonitions
+
+Write one as a blockquote whose first word is bold:
+
+```markdown
+> **Warning** — check the usage policy of the provider you choose.
+```
+
+Nothing else, and that is the point. A page Weblate rewrites can hold no Liquid
+tag — a tag a translation breaks fails the whole build — and GitHub's own
+`> [!WARNING]` is a feature of the github.com renderer, not of kramdown, which is
+what builds these pages: it would leave the literal text `[!WARNING]` on the page.
+
+The bold word carries the type, matched against **every language the theme
+knows**, because that word is part of the translated paragraph — the French pages
+of plugin-maps already say `**Avertissement**`. The words come from `t_adm_note`,
+`t_adm_warning` and `t_adm_todo`, whose union across the catalogues
+`bin/build-i18n` writes into `_includes/admonition-words.html`. Matching the union
+rather than the page's own language also covers a page under `de/` whose text is
+still English.
+
+A word no catalogue lists keeps a neutral box rather than losing its styling, so
+a translation nobody anticipated degrades instead of breaking. Without JavaScript
+these stay ordinary blockquotes: the test — "the bold run opens the paragraph" —
+cannot be written in CSS, since `:first-child` counts elements and ignores text
+nodes, so `:has(> p > strong:first-child)` would box any quotation with bold text
+in the middle of it.
+
+`alert.html` is still there, and still centres its content under a title, for a
+page no translator touches.
+
 ### The menu
 
 The menu lives in the sidebar, exactly as on galette.eu, and folds into an

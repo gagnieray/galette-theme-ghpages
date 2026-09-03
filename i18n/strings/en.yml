@@ -20,3 +20,6 @@ t_latest: latest
 t_compat_galette: Compatible Galette %s
 t_compat_outdated: This plugin is not compatible with latest Galette version (%s).
 t_languages: Languages
+t_adm_note: Note
+t_adm_warning: Warning
+t_adm_todo: Todo

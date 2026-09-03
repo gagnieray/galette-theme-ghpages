@@ -11,20 +11,88 @@
 }
 
 .admonition-todo {
-    background-color: rgba(255,255,0,0.5);
+    background-color: $galette-adm-todo;
 }
 
 .admonition-note {
-    background-color: rgba(248, 195, 99, 0.5);
+    background-color: $galette-adm-note;
 }
 
 .admonition-warning {
-    background-color: rgba(255,0,0,0.5);
+    background-color: $galette-adm-warning;
 }
 
 section#content .admonition p {
     margin: 0;
     text-align: center;
+}
+
+/** An admonition written as a blockquote: `> **Warning** — …`, which is all an
+    author writes, and all a translator ever sees. scripts.html adds the classes,
+    reading that leading word.
+
+    Deliberately not drawn by CSS `:has()`, tempting as it was: `:first-child`
+    counts elements and ignores text nodes, so
+    `> Une citation **avec du gras** au milieu` matches
+    `blockquote:has(> p > strong:first-child)` and would be boxed as an
+    admonition. CSS cannot say "the bold run opens the paragraph", so the test
+    belongs where it can be expressed. Without JavaScript these stay ordinary
+    blockquotes, which is a fair reading of what they are.
+
+    A word no catalogue lists keeps the neutral box below rather than losing the
+    styling altogether. */
+section#content blockquote.admonition {
+    /* Not a quotation any more: it drops the citation rule and takes the shape
+       of the include-based admonitions instead. */
+    border-inline-start: 0;
+    border-radius: 10px;
+    padding: 1em;
+    background: $galette-light-grey;
+    color: #000;
+
+    &.admonition-todo    { background: $galette-adm-todo; }
+    &.admonition-note    { background: $galette-adm-note; }
+    &.admonition-warning { background: $galette-adm-warning; }
+
+    p {
+        /* Overrides the centring above, which belongs to the titled variant. */
+        text-align: start;
+        margin: 0;
+    }
+
+    /* The bold word stands in for the title, icon included — the same images the
+       titled variant uses, so the two read as one thing. */
+    > p:first-child > strong:first-child {
+        font-size: 1.05em;
+    }
+
+    &.admonition-todo,
+    &.admonition-note,
+    &.admonition-warning {
+        > p:first-child > strong:first-child::before {
+            content: '';
+            display: inline-block;
+            width: 1.1em;
+            height: 1.1em;
+            margin-inline-end: .4em;
+            vertical-align: -.2em;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+    }
+
+    &.admonition-todo > p:first-child > strong:first-child::before {
+        background-image: url('#{$assets-path}/images/todo.png');
+    }
+
+    &.admonition-note > p:first-child > strong:first-child::before {
+        background-image: url('#{$assets-path}/images/info.png');
+    }
+
+    &.admonition-warning > p:first-child > strong:first-child::before {
+        background-image: url('#{$assets-path}/images/warning.png');
+    }
 }
 
 .admonition-title {
