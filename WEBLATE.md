@@ -206,11 +206,33 @@ File format parameters, both components:
 * **Deduplicate identical strings** (`markdown_merge_duplicates`) — on. It keeps
   translations stable when a table row or a section moves.
 
-One thing to weigh before using the theme's admonitions: `{% include
-alert.html type="warning" content="…" %}` becomes **one unit carrying the whole
-Liquid tag**, so a translator edits the tag itself and a stray quote or a dropped
-`%}` fails the Pages build. A blockquote, which the theme also styles, keeps the
-translatable text clean at the cost of the coloured box.
+**Do not put the theme's admonitions in a page Weblate writes.** Measured on
+maps, twice:
+
+* `{% include alert.html type="warning" content="…" %}` becomes one unit carrying
+  the whole Liquid tag. Weblate re-wraps the file at `line_max_length`, an
+  include tag has to hold a single line, and the Pages build then fails on
+  **every** language file — the untranslated ones too, since the English source
+  is re-wrapped as well. French had also closed `content="` with a guillemet.
+* A blockquote with a kramdown attribute list — `{: .admonition
+  .admonition-warning}` — produces the include's own markup from plain Markdown,
+  but Weblate's serialiser folds the attribute list into the paragraph text: the
+  classes stop applying and the braces show as content. It fails softly rather
+  than breaking the build, but it fails.
+
+What survives is a quoted paragraph opening with a bold label:
+
+```markdown
+> **Warning** — Check the usage policy of the provider you choose.
+```
+
+The theme styles blockquotes already, the label travels inside the sentence so it
+gets translated (the include hardcoded it, capitalised), and no round-trip can
+break it. Keep the admonition include for pages no translator touches.
+
+`line_max_length: 80` is not the culprit and is worth keeping: it reflows the
+Markdown so a one-word change touches one line in the diff instead of a whole
+paragraph. It only ever hurts content that is not prose.
 
 There is deliberately **no identifier in the front matter**: the theme derives the
 language from the directory and pairs a page with its translations by file name,
