@@ -445,6 +445,15 @@ use the default name; all six develop on `develop`. The `npm` ecosystem
 dependabot declares for maps and events is legitimate, both have a
 `package.json`.
 
+**But `maps` and `events` build their assets with npm inside `add_libs`,** and
+what it produces is gitignored — `webroot/*.min.js` and friends for maps. Their
+cleanup block therefore has to be **extended**, not replaced by fullcard's:
+dropping the build would publish a plugin without its assets, and `git archive`
+alone cannot notice. Add the npm sources (`gulpfile.js`, `package.json`,
+`package-lock.json`) and `node_modules` to the list, and check the archive
+carries the built bundles before dispatching anything. paypal, objectslend and
+activities have no npm step.
+
 Documentation translation, from the `.po` catalogues:
 
 | | strings | at 100 % |
