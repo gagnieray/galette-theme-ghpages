@@ -285,6 +285,13 @@ once that first scan is done: until then the component reports zero strings and
 looks broken. A `POST /repository/` with `{"operation": "pull"}` brings the scan
 forward once the lock is clear.
 
+**That check is advisory, not a reservation.** Weblate can take the lock between
+the moment it answers `false` and the moment the next request arrives — two of
+eleven languages came back `423` on events despite waiting for each one. So
+retry the request itself, treating `423` as "wait and try again" and `400` as
+"already there", rather than trusting the lock endpoint and moving on. A request
+lost that way leaves no trace in the interface: the language is simply absent.
+
 ### Recovering the old catalogues, without recording English
 
 The Sphinx `.po` files hold the translations the manual accumulated. Two ways in,
