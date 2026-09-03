@@ -106,6 +106,26 @@ The `alert.html` include is still there for a page no translator touches:
 
 {% include alert.html type="warning" content="This is a warning" %}
 
+## Images
+
+An image the content column has to shrink becomes clickable, and opens at its
+full size. Nothing is written in the Markdown to ask for it: the script compares
+the picture's natural width to the width it is given, which is the automatic
+equivalent of the `:scale:` the Sphinx manual relies on.
+
+The same file is used twice here on purpose, so the viewer has two images to move
+between — arrows, a counter, and the arrow keys.
+
+![A screenshot wider than the column that holds it](assets/images/og_image.jpg)
+
+![The very same file, so the viewer has somewhere to go](assets/images/og_image.jpg)
+
+The caption in the viewer is the alt text, which Weblate already translates. An
+image small enough to be shown whole gains nothing from a viewer, so it is left
+alone — this one is 208px wide and stays an ordinary image:
+
+![The Galette logo, too small to be worth opening](assets/images/galette.png)
+
 ## Horizontal rule
 
 ---

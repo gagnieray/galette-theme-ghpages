@@ -67,6 +67,184 @@
     }
   })();
 
+  /* Screenshots are shown at whatever the content column allows — 670px or so,
+     against captures that run to 1300 — so the theme offers to open them at full
+     size, as the Sphinx manual does.
+
+     Which images: those `#content` actually shrinks, and that are not already a
+     link. `naturalWidth > clientWidth` is the automatic equivalent of the
+     `:scale:` the manual relies on, and it covers the images the manual leaves
+     out, since docutils only makes the scaled ones clickable. The link test is
+     what keeps the download badges out — they go to the release, not to a
+     viewer.
+
+     Nothing is asked of the page. Markdown that Weblate rewrites can carry no
+     Liquid tag and no kramdown attribute list, so the whole test is made here,
+     from the rendered image alone. The caption is the `alt`, which is already a
+     translated string — the manual's own viewer shows none.
+
+     A bare <img> takes no focus, so an eligible one is wrapped in a button. And
+     the viewer is a <dialog>: showModal() brings Escape, the focus trap and the
+     top layer with it, which is also what keeps it clear of the mobile menu's
+     z-index. */
+  (function () {
+    var strings = {
+      close: {{ t_img_close | default: 'Close image' | jsonify }},
+      prev: {{ t_img_prev | default: 'Previous image' | jsonify }},
+      next: {{ t_img_next | default: 'Next image' | jsonify }},
+      counter: {{ t_img_counter | default: 'Image %s of %s' | jsonify }}
+    };
+    var content = document.getElementById('content');
+    if (!content) return;
+
+    var group = [];        /* the eligible images, in document order */
+    var dialog = null;
+    var view = null, caption = null, counter = null, prev = null, next = null;
+    var current = 0, opener = null, shown = null;
+
+    function shrunk(img) {
+      /* naturalWidth is 0 until the image has loaded, and clientWidth changes
+         with the viewport, so this is asked again on load and on resize. */
+      return img.naturalWidth > 0 && img.naturalWidth > img.clientWidth;
+    }
+
+    function eligible(img) {
+      return !img.closest('a') && shrunk(img);
+    }
+
+    function button(img) {
+      var b = img.parentNode;
+      return b && b.nodeName === 'BUTTON' && b.className === 'zoomable' ? b : null;
+    }
+
+    function wrap(img) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'zoomable';
+      img.parentNode.insertBefore(b, img);
+      b.appendChild(img);
+      b.addEventListener('click', function () { open(img); });
+    }
+
+    function unwrap(b) {
+      var img = b.firstChild;
+      b.parentNode.insertBefore(img, b);
+      b.parentNode.removeChild(b);
+    }
+
+    /* Kept in step rather than done once: an image that stops being shrunk, on a
+       window made wider, stops offering something it can no longer deliver. */
+    function mark() {
+      var imgs = content.querySelectorAll('img');
+      group = [];
+      for (var i = 0; i < imgs.length; i++) {
+        var img = imgs[i], b = button(img);
+        if (eligible(img)) {
+          if (!b) wrap(img);
+          group.push(img);
+        } else if (b) {
+          unwrap(b);
+        }
+      }
+      /* Re-marking while the viewer is open must not leave it on a stale
+         index: follow the image being shown, and give up if it has just left
+         the group. */
+      if (dialog && dialog.open) {
+        var at = group.indexOf(shown);
+        if (at === -1) { close(); } else { current = at; refresh(); }
+      }
+    }
+
+    function build() {
+      dialog = document.createElement('dialog');
+      dialog.className = 'lightbox';
+      dialog.innerHTML =
+        '<div class="lightbox-bar">' +
+          '<span class="lightbox-counter"></span>' +
+          '<button type="button" class="lightbox-close"></button>' +
+        '</div>' +
+        '<button type="button" class="lightbox-prev"></button>' +
+        '<img class="lightbox-view" alt="">' +
+        '<button type="button" class="lightbox-next"></button>' +
+        '<p class="lightbox-caption"></p>';
+      view = dialog.querySelector('.lightbox-view');
+      caption = dialog.querySelector('.lightbox-caption');
+      counter = dialog.querySelector('.lightbox-counter');
+      prev = dialog.querySelector('.lightbox-prev');
+      next = dialog.querySelector('.lightbox-next');
+      dialog.querySelector('.lightbox-close').setAttribute('aria-label', strings.close);
+      prev.setAttribute('aria-label', strings.prev);
+      next.setAttribute('aria-label', strings.next);
+      caption.id = 'lightbox-caption';
+      dialog.setAttribute('aria-labelledby', caption.id);
+
+      dialog.querySelector('.lightbox-close').addEventListener('click', close);
+      prev.addEventListener('click', function () { step(-1); });
+      next.addEventListener('click', function () { step(1); });
+      /* showModal() gives Escape for free; these are the arrows it does not. */
+      dialog.addEventListener('keydown', function (event) {
+        if (event.key === 'ArrowLeft') { step(-1); }
+        else if (event.key === 'ArrowRight') { step(1); }
+      });
+      /* A click on the backdrop lands on the dialog itself, never on a child. */
+      dialog.addEventListener('click', function (event) {
+        if (event.target === dialog) close();
+      });
+      dialog.addEventListener('close', function () {
+        if (opener && document.contains(opener)) opener.focus();
+        opener = null;
+        shown = null;
+      });
+      document.body.appendChild(dialog);
+    }
+
+    function refresh() {
+      var img = group[current];
+      if (!img) return close();
+      shown = img;
+      view.src = img.currentSrc || img.src;
+      view.alt = img.alt;
+      caption.textContent = img.alt;
+      caption.hidden = !img.alt;
+      var many = group.length > 1;
+      prev.hidden = next.hidden = !many;
+      counter.hidden = !many;
+      if (many) {
+        counter.textContent = strings.counter
+          .replace('%s', current + 1).replace('%s', group.length);
+      }
+    }
+
+    function step(by) {
+      if (group.length < 2) return;
+      current = (current + by + group.length) % group.length;
+      refresh();
+    }
+
+    function open(img) {
+      var at = group.indexOf(img);
+      if (at === -1) return;
+      if (!dialog) build();
+      current = at;
+      opener = button(img);
+      refresh();
+      dialog.showModal();
+    }
+
+    function close() {
+      if (dialog && dialog.open) dialog.close();
+    }
+
+    mark();
+    window.addEventListener('resize', mark);
+    /* An image still loading has no natural size yet, so it is judged again once
+       it has one. */
+    var all = content.querySelectorAll('img');
+    for (var i = 0; i < all.length; i++) {
+      if (!all[i].complete) all[i].addEventListener('load', mark);
+    }
+  })();
+
   /* The language picker is a <details>, so it already opens, closes and takes
      the keyboard on its own. This only adds what <details> does not do:
      dismissing it with Escape or a click elsewhere. */

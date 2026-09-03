@@ -121,6 +121,17 @@ jobs:
           ! grep -oE 'blockquote:has\([^)]*\) *\{' _site/assets/css/style.css
           test "$(grep -o '<blockquote>' _site/demo.html | wc -l)" -ge 5
 
+      # Presence only: whether an image gets a button depends on its natural
+      # size against the width it is given, which no static build can answer —
+      # that is checked in a browser, see README.
+      - name: Check the image viewer is wired
+        run: |
+          grep -q "'zoomable'" _site/demo.html
+          grep -q 'dialog.lightbox' _site/assets/css/style.css
+          # Two screenshots and the logo: the demo has to carry content images at
+          # all, which it did not until the viewer needed something to open.
+          test "$(grep -o 'src="assets/images/' _site/demo.html | wc -l)" -ge 3
+
       - name: Check the language picker links the translated page
         run: |
           grep -q 'details class="langpicker"' _site/demo.html

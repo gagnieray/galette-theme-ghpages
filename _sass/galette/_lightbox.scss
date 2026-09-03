@@ -1,0 +1,141 @@
+/** Opening a screenshot at full size.
+
+    The content column is narrower than the captures it carries, so scripts.html
+    wraps every image it shrinks in a button and opens it in a <dialog>. Nothing
+    here applies until that script has run: without it the images stay images,
+    which is what the pages have always been. */
+
+/** The wrapper the script puts around an eligible image. A button, because that
+    is what it behaves like — but it must leave no trace of one around the
+    picture. */
+.zoomable {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+    /* The button is only as wide as its image, so the outline traces the
+       picture rather than the column. */
+    max-width: 100%;
+    line-height: 0;
+
+    &:focus-visible {
+        outline: 2px solid $galette-blue;
+        outline-offset: 2px;
+    }
+}
+
+dialog.lightbox {
+    /* The dialog is the whole viewport: the image is centred inside it, and the
+       area around it is what a click closes. */
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    align-items: center;
+    justify-items: center;
+    gap: .5em;
+
+    &::backdrop {
+        background: rgba(15, 15, 17, 0.93);
+    }
+
+    .lightbox-bar {
+        grid-column: 1 / 4;
+        grid-row: 1;
+        align-self: start;
+        justify-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1em;
+        padding: .6em 1em;
+        color: #fff;
+    }
+
+    .lightbox-counter {
+        font-size: $small-font-size;
+    }
+
+    .lightbox-view {
+        grid-column: 2;
+        grid-row: 2;
+        /* Its natural size, capped by the viewport — the point of the exercise
+           is to stop the content column deciding. */
+        max-width: 95vw;
+        max-height: 78vh;
+        object-fit: contain;
+    }
+
+    .lightbox-caption {
+        grid-column: 1 / 4;
+        grid-row: 3;
+        margin: 0;
+        padding: .6em 1.5em 1.2em;
+        max-width: 60ch;
+        color: #fff;
+        text-align: center;
+        font-size: $small-font-size;
+    }
+
+    .lightbox-prev {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .lightbox-next {
+        grid-column: 3;
+        grid-row: 2;
+    }
+
+    button {
+        border: 0;
+        background: none;
+        color: #fff;
+        font: inherit;
+        line-height: 1;
+        cursor: pointer;
+        padding: .2em .5em;
+        border-radius: 4px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $galette-orange;
+            outline-offset: 2px;
+        }
+    }
+
+    /* Drawn rather than pulled from an image file: three glyphs, no request, and
+       they follow the text colour. */
+    .lightbox-close::before { content: '\00d7'; font-size: 2em; }
+    .lightbox-prev::before  { content: '\2039'; font-size: 3em; }
+    .lightbox-next::before  { content: '\203a'; font-size: 3em; }
+}
+
+@media screen and (max-width: $galette-large) {
+    dialog.lightbox {
+        gap: .2em;
+
+        .lightbox-view {
+            max-width: 100vw;
+        }
+
+        .lightbox-prev::before,
+        .lightbox-next::before {
+            font-size: 2em;
+        }
+    }
+}

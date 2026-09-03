@@ -23,3 +23,7 @@ t_languages: Languages
 t_adm_note: Note
 t_adm_warning: Warning
 t_adm_todo: Todo
+t_img_close: Close image
+t_img_prev: Previous image
+t_img_next: Next image
+t_img_counter: Image %s of %s

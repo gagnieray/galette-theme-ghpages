@@ -138,6 +138,32 @@ in the middle of it.
 `alert.html` is still there, and still centres its content under a title, for a
 page no translator touches.
 
+### Opening an image
+
+An image the content column has to shrink is clickable, and opens at its full
+size in a viewer: dark backdrop, the alt text as a caption, and — when a page has
+several — a counter, arrows and the left and right keys. Escape closes it, so
+does a click outside, and focus returns to the image it came from.
+
+Nothing is written in the Markdown to ask for any of it. A page Weblate rewrites
+can carry no Liquid tag and no kramdown attribute list, so the whole decision is
+made from the rendered image: `#content` images that are **not already a link** —
+which keeps the download badges out — and whose natural width exceeds the width
+they are given. That is the automatic equivalent of the `:scale:` the Sphinx
+manual relies on, and it covers the images the manual leaves out, since docutils
+only makes the scaled ones clickable.
+
+The caption costs nothing: the alt text is already a translated string. Only the
+viewer's own controls needed strings — `t_img_close`, `t_img_prev`, `t_img_next`
+and `t_img_counter`, whose `%s` are substituted after translation.
+
+The viewer is a `<dialog>`: `showModal()` brings Escape, the focus trap and the
+top layer with it, which is also what keeps it clear of the mobile menu's
+`z-index`. Without JavaScript the images stay images, exactly as they were.
+
+Not reproduced from the manual's fancyBox: pinch-zoom and panning. The picture is
+contained in the viewport, which on a normal screen is already close to 1:1.
+
 ### The menu
 
 The menu lives in the sidebar, exactly as on galette.eu, and folds into an
