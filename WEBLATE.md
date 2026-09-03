@@ -292,6 +292,44 @@ retry the request itself, treating `423` as "wait and try again" and `400` as
 "already there", rather than trusting the lock endpoint and moving on. A request
 lost that way leaves no trace in the interface: the language is simply absent.
 
+### A Weblate pull request that cannot be merged
+
+Symptom: its previous pull request was merged, the next one shows a conflict or
+refuses to merge, and Weblate itself reports nothing pending on either component.
+
+Cause: these repositories do not allow merge commits, so a Weblate pull request
+is squashed. Its original commits are then no longer ancestors of the branch, and
+if Weblate opens the next request before pulling that squashed tip, it re-proposes
+what is already there. GitHub can still report it `mergeable`, while
+`rebaseable` is false — which is what disables the button when rebase is the only
+method left.
+
+Check before touching anything, because the answer decides everything: compare
+each file in the request against the branch. If every blob matches, the request
+carries nothing.
+
+```sh
+for f in $(gh pr view <n> --repo <repo> --json files --jq '.files[].path'); do
+  a=$(gh api "repos/<repo>/contents/$f?ref=<pr head sha>" --jq .sha)
+  b=$(gh api "repos/<repo>/contents/$f?ref=gh-pages"      --jq .sha)
+  [ "$a" = "$b" ] || echo "differs: $f"
+done
+```
+
+Then close it and reset the component's working copy — the translations live in
+Weblate's database, so a reset discards only the diverged git branch:
+
+```sh
+curl -X POST -H @hdr -H 'Content-Type: application/json' \
+  -d '{"operation": "reset"}' \
+  https://hosted.weblate.org/api/components/galette/<parent slug>/repository/
+```
+
+Afterwards `weblate_commit` and `remote_commit` read the same revision, and the
+next request is built from the current tip. This is not worth a policy change:
+maps merged five Weblate requests in a row without trouble, so the divergence
+usually resolves itself on the next pull.
+
 ### Recovering the old catalogues, without recording English
 
 The Sphinx `.po` files hold the translations the manual accumulated. Two ways in,
