@@ -133,15 +133,60 @@ section#content {
     }
 }
 
-/** Minimum Galette version, at the bottom of the cartouche */
+/** The Galette generation each download targets, at the foot of the cartouche.
+    A sibling row of the orange list and not cells inside it: those buttons are
+    `nowrap` with an ellipsis, 175px wide at most, which no sentence survives.
+    The columns mirror the list's own flex rules instead, so each mention sits
+    under its own link — and a cartouche with a single link gets a single
+    mention, filling the row. */
 .requires {
-    display: block;
+    display: flex;
+    margin: 0;
     font-size: $small-font-size;
     color: $galette-dark-grey;
     text-align: center;
     border-bottom: 3px solid $galette-orange;
     border-radius: 5px;
     padding: .2em 0;
+
+    > span {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/** The verdict pill, shaped like the maintainer one so the header reads as one
+    family. Neutral by default — an unverified number is shown, not judged — then
+    green when the build targets the Galette anyone would install today, red when
+    it has fallen a generation behind. The icon carries the same distinction as
+    the colour, which must never be the only cue. */
+.compat {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: .35em;
+    padding: .1em .5em;
+    border-radius: 999px;
+    line-height: 1.35;
+    text-wrap: balance;
+
+    &.compat-ok {
+        color: $galette-compat-ok;
+    }
+
+    &.compat-stale {
+        color: $galette-compat-stale;
+        cursor: help;
+    }
+
+    .compat-icon {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+        /* Baseline-aligned flex items ignore an svg's own baseline, so nudge it
+           onto the text's. */
+        align-self: center;
+    }
 }
 
 /** Language picker: a `<details>` disclosure, so it needs no JavaScript to

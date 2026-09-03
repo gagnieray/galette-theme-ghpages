@@ -17,5 +17,6 @@ t_nav_tracker: Bugs and features
 t_galette_website: Galette website
 t_galette_doc: Galette documentation
 t_latest: latest
-t_requires: Requires Galette %s or later.
+t_compat_galette: Compatible Galette %s
+t_compat_outdated: This plugin is not compatible with latest Galette version (%s).
 t_languages: Languages

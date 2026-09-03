@@ -54,6 +54,28 @@ shown as stable.
     {%- capture nightly_url -%}{{ site.github.releases_url }}/download/nightly/{{ site.plugin.archive }}-dev.tar.bz2{%- endcapture -%}
   {%- endif -%}
 {%- endif -%}
+{%- comment -%}
+What the stable download declares about Galette: `compver` in the plugin's
+_define.php at that release's tag, copied onto this branch as _data/galette.yml
+by galette/.github/actions/release-plugin. It is used only when it describes the
+release named above — a release published by hand writes no such file, and the
+number would otherwise belong to a different one.
+
+A verdict is only ever given on a value that was read and compared by machine.
+`plugin.min_galette`, kept by hand in _config.yml, is still honoured for a plugin
+with no release workflow yet, but it carries no rank and so gets no colour: an
+unverified number is shown, not judged.
+
+The nightly link never gets a verdict either. It targets whichever generation
+`develop` currently declares, against a Galette nightly nothing tracks — a
+nightly requires a nightly.
+{%- endcomment -%}
+{%- assign compat_label = site.plugin.min_galette -%}
+{%- assign compat_rank = nil -%}
+{%- if site.data.galette.release == dl_version and site.data.galette.series -%}
+  {%- assign compat_label = site.data.galette.series -%}
+  {%- assign compat_rank = site.data.galette.rank -%}
+{%- endif -%}
 {%- if release_url or nightly_url -%}
 <aside id="galette" aria-label="{{ t_nav_download }}">
   <ul>
@@ -64,6 +86,9 @@ shown as stable.
     <li><a href="{{ nightly_url }}">{{ dl_name }} <strong>nightly</strong></a></li>
     {%- endif %}
   </ul>
-  {%- include requires.html -%}
+  <p class="requires">
+    {%- if release_url %}{% include requires.html label=compat_label rank=compat_rank %}{% endif -%}
+    {%- if nightly_url %}{% include requires.html label='nightly' %}{% endif -%}
+  </p>
 </aside>
 {%- endif -%}

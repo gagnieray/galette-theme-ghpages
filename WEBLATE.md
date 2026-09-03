@@ -50,6 +50,13 @@ nine others appear empty and fall back to English on the sites until filled.
 language codes, autonyms, text direction — not translatable content. A mask of
 `i18n/*.yml` would make Weblate treat `languages` as a language code.
 
+Same reasoning for **`_data/galette.yml` on a plugin's Pages branch**: it is
+generated at each release by `galette/.github/actions/release-plugin` and holds
+version numbers, so no component mask may reach it. The current masks
+(`*/index.md`, `*/documentation.md`) do not, and a commit from that action on the
+same branch is what Weblate will occasionally have to rebase onto — harmless, it
+never touches a page.
+
 ### Keeping the generated Liquid in step
 
 The Liquid the theme ships is generated from these YAML files, so `bin/build-i18n`

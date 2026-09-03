@@ -1,0 +1,5 @@
+# CI only, overlaid on _config.yml to build the demo a second time with no
+# _data/ at all. That is the path a plugin whose releases are still published by
+# hand takes: `plugin.min_galette` from _config.yml is shown, and — never having
+# been read or compared by machine — it is shown without a verdict.
+data_dir: test/nodata

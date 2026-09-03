@@ -1,8 +1,38 @@
 {%- comment -%}
-The minimum Galette version, from `plugin.min_galette`. It is rendered here and
-not written into the pages, so the number never ends up inside a string a
-translator has to carry — `%s` is substituted after translation.
+The compatibility pill under one download link: which Galette generation that
+build targets, and whether it is the Galette anyone would install today.
+
+  {% include requires.html label='1.2' rank=1002000 %}   green, or red
+  {% include requires.html label='nightly' %}            neutral, no verdict
+
+`rank` is the build's own compatibility version packed into an integer, because
+Liquid cannot compare versions. Plugins::register() disables a plugin whose
+compver is LOWER than the running Galette's GALETTE_COMPAT_VERSION, and imposes
+no upper bound — so a build is compatible exactly when its rank reaches the one
+galette-version.html carries.
+
+Omitting `rank` asks for no verdict. That is what the nightly link needs — it
+targets whatever `develop` declares, against a Galette nightly nothing tracks —
+and it is also what an unverified `plugin.min_galette` gets: a number nobody
+read or compared is shown, not judged.
+
+Both numbers are substituted after translation, so neither enters a translatable
+string: the pill names the generation this build targets, and the title of the red
+one names the Galette it is behind. Expects the strings from i18n.html, and
+galette_version / galette_compat_rank from galette-version.html, to be in scope.
+
+The spans are written on one line each on purpose: Liquid would otherwise leave
+the indentation inside them, which an inline-flex box turns into a visible gap.
 {%- endcomment -%}
-{%- if site.plugin.min_galette -%}
-  <span class="requires">{{ t_requires | replace: '%s', site.plugin.min_galette }}</span>
+{%- if include.label -%}
+  {%- assign compat_text = t_compat_galette | replace: '%s', include.label -%}
+  {%- capture tick -%}<svg class="compat-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.6l5.2 5.2L20 6.6"/></svg>{%- endcapture -%}
+  {%- capture cross -%}<svg class="compat-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>{%- endcapture -%}
+  {%- if include.rank == nil -%}
+<span class="compat">{{ compat_text }}</span>
+  {%- elsif include.rank >= galette_compat_rank -%}
+<span class="compat compat-ok">{{ tick }}{{ compat_text }}</span>
+  {%- else -%}
+<span class="compat compat-stale" title="{{ t_compat_outdated | replace: '%s', galette_version }}">{{ cross }}{{ compat_text }}</span>
+  {%- endif -%}
 {%- endif -%}

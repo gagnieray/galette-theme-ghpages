@@ -26,6 +26,12 @@ the theme was pushed at 05:21:43 and the three consuming sites were rebuilt at
 * **A release refreshes the version.** `galette/.github/actions/release-plugin`
   requests a Pages build after a tag, so the download cartouche stops naming the
   previous release without anyone asking.
+* **The compatibility pill keeps itself honest, from both ends.** The same action
+  writes `compver` from the tagged `_define.php` into `_data/galette.yml` on the
+  Pages branch, and the theme carries which Galette is current in
+  `_includes/galette-version.html`, refreshed daily from Galette's own latest
+  release. So a plugin release updates the pill, and a *Galette* release flips it
+  on every site at once — neither needs `min_galette` touched again.
 * **Languages are already known.** The theme carries the nineteen languages
   Galette translates into, with their native names and text direction, and takes
   a page's language from its directory. A language Weblate adds on a translator's
@@ -53,6 +59,7 @@ Every line here cost a round trip on fullcard, oauth2 or auto.
 | 14 | `bin/release` predates the Actions pipeline on **every plugin still to migrate** — the workflows alone are not enough | auto's first Nightly died on `import urlgrabber.progress` |
 | 15 | The three CI conditions can each hold a **different** stale value, and the branch they name can be wrong too | oauth2 had `galette-oauth2` twice, `plugin-oauth2` once, and `master` where its branch is `main` |
 | 16 | Deleting an immutable release **burns its tag for good** — GitHub then refuses to create that ref at all | oauth2 cannot use the `nightly` tag and rolls on `dev` instead |
+| 17 | `compver` of the current generation lives **only on `develop`**. Every published release declares the previous one, and `master` HEAD is wrong too — paypal's declares 1.2.1 where its tag declared 1.2.0 | the eight hand-written `min_galette: "1.3.0"` were all copied from `develop`, and named the nightly's generation under the stable link |
 
 ## 3. The procedure
 
@@ -262,12 +269,13 @@ author: Johan Cwiklinski
 # in this organisation — hence the pill in the header.
 maintainer: core
 
-# No version: releases are built by GitHub Actions, so the theme reads the latest
-# one and derives both download URLs from `archive`. Nothing to bump.
+# No version and no min_galette: releases are built by GitHub Actions, so the
+# theme reads the latest one, derives both download URLs from `archive`, and gets
+# the Galette version it targets from _data/galette.yml, which the release writes.
+# Nothing to bump here.
 plugin:
   name: Auto
   archive: galette-plugin-auto
-  min_galette: "1.3.0"
 
 # GitHub issues are disabled on this repository; the tracker is the Redmine
 # project, as for Galette itself.
@@ -288,12 +296,18 @@ exclude:
   - vendor
 ```
 
-Two values are **read, never guessed**:
+One value is **read, never guessed**:
 
 * `archive` comes from `bin/release` (the `archive_name` assignment, around line
   178). `legalnotices` uses `galette-plugin-legal-notices`, so the repository name
   is not a reliable source.
-* `min_galette` is `compver` in `_define.php`.
+
+And **do not write `min_galette` at all** on a plugin whose releases the workflows
+build: the action reads `compver` from the tagged `_define.php` and writes it to
+`_data/galette.yml` itself, at the next release. Setting it by hand only puts an
+unverified number in front of the reader until then — and getting it from
+`develop`, which is the obvious place to look, names the wrong generation
+(trap 17). It stays available for the plugins still published by hand.
 
 A third one only when step 3 had to override `nightly-tag`: the cartouche builds
 the nightly URL from the `nightly` tag, so a plugin rolling on another tag needs
@@ -470,14 +484,17 @@ with no new warning.
 
 Values read from each plugin, not inferred.
 
-| | archive | min_galette | DB | doc images | tracker | stable branch |
-|---|---|---|---|---|---|---|
-| auto | `galette-plugin-auto` | 1.3.0 | yes, `scripts/`, 10 tables | 0 | `galette-plugin-auto` | master |
-| paypal | `galette-plugin-paypal` | 1.3.0 | yes + upgrade scripts | 3 | **`galette-plugin-paypa`** | master |
-| maps | `galette-plugin-maps` | 1.3.0 | yes + upgrade scripts | 4 | `galette-plugin-maps` | master |
-| events | `galette-plugin-events` | 1.3.0 | yes + upgrade scripts | 7 | **`evenements`** | master |
-| objectslend | `galette-plugin-objectslend` | 1.3.0 | yes, **no pgsql upgrades** | 4 | `galette-plugin-objectslend` | master |
-| activities | `galette-plugin-activities` | 1.3.0 | yes | 0 | **GitHub issues** | **main** |
+The `min_galette` column this table used to carry is gone on purpose: the action
+writes it, and every value in it was wrong anyway — see trap 17.
+
+| | archive | DB | doc images | tracker | stable branch |
+|---|---|---|---|---|---|
+| auto | `galette-plugin-auto` | yes, `scripts/`, 10 tables | 0 | `galette-plugin-auto` | master |
+| paypal | `galette-plugin-paypal` | yes + upgrade scripts | 3 | **`galette-plugin-paypa`** | master |
+| maps | `galette-plugin-maps` | yes + upgrade scripts | 4 | `galette-plugin-maps` | master |
+| events | `galette-plugin-events` | yes + upgrade scripts | 7 | **`evenements`** | master |
+| objectslend | `galette-plugin-objectslend` | yes, **no pgsql upgrades** | 4 | `galette-plugin-objectslend` | master |
+| activities | `galette-plugin-activities` | yes | 0 | **GitHub issues** | **main** |
 
 Two tracker slugs are off convention and both answer 200: paypal's is truncated
 (`galette-plugin-paypa`) and events' is French (`evenements`). `activities` has no

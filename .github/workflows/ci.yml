@@ -55,6 +55,61 @@ jobs:
           grep -q 'maintainer-core' _site/index.html
           grep -q 'id="galette"' _site/index.html
 
+      # Nothing below names a Galette version, on purpose. The verdict is a
+      # comparison between _data/galette.yml and _includes/galette-version.html,
+      # and bin/refresh-galette-version moves both when Galette releases —
+      # asserting "1.2" here would have turned this job red on Galette's next
+      # release rather than on a regression in the theme. Every expected value is
+      # therefore read back from the file that produced it.
+      - name: Check the compatibility verdict rendered
+        run: |
+          series=$(sed -nE 's/^series: "(.*)"$/\1/p' _data/galette.yml)
+          test -n "$series"
+          # The pill carries its icon inline, hence the wildcard between the
+          # class and the number; matching the number alone would also match the
+          # download button above it.
+          grep -q "class=\"compat compat-ok\"[^>]*>.*${series}</span>" _site/index.html
+          # Two pills, one per link. The character class matters: compat-icon
+          # would otherwise count as a third.
+          test "$(grep -o 'class="compat[ \"]' _site/index.html | wc -l)" = 2
+          # The nightly link never gets a verdict, whatever the numbers say.
+          grep -q 'class="compat">' _site/index.html
+
+      # The state a plugin reaches by standing still while Galette moves on: same
+      # fixture, rank dropped one below the current Galette's.
+      - name: Check the outdated state turns the verdict red
+        run: |
+          rank=$(sed -nE 's/^rank: ([0-9]+)$/\1/p' _data/galette.yml)
+          test -n "$rank"
+          # One whole generation back, and the label derived from that same
+          # number so the fixture is coherent: a plugin behind by a generation
+          # names the older one, it does not name the current one in red.
+          stale=$((rank - 1000))
+          mkdir -p test/data-stale
+          sed -E "s/^rank: .*/rank: ${stale}/; s/^series: .*/series: \"$((stale / 1000000)).$((stale / 1000 % 1000))\"/" \
+            _data/galette.yml > test/data-stale/galette.yml
+          cat test/data-stale/galette.yml
+          bundle exec jekyll build --trace \
+            --config _config.yml,test/_config-stale.yml -d _site-stale
+          grep -q 'class="compat compat-stale"' _site-stale/index.html
+          ! grep -q 'compat-ok' _site-stale/index.html
+          # The title names the Galette it is behind, not the plugin's own target.
+          version=$(sed -nE 's/.*galette_version = "([^"]+)".*/\1/p' _includes/galette-version.html)
+          test -n "$version"
+          grep -q "title=\"[^\"]*(${version})" _site-stale/index.html
+
+      # And the third state: no _data at all, so `plugin.min_galette` from
+      # _config.yml is shown — and shown without a verdict, because nothing read
+      # or compared it. This is what a plugin still published by hand gets.
+      - name: Check the unverified fallback renders without a verdict
+        run: |
+          min=$(sed -nE 's/^[[:space:]]+min_galette:[[:space:]]*"([^"]+)".*/\1/p' _config.yml | head -n1)
+          test -n "$min"
+          bundle exec jekyll build --trace \
+            --config _config.yml,test/_config-nodata.yml -d _site-nodata
+          grep -q ">Compatible Galette ${min}</span>" _site-nodata/index.html
+          ! grep -q 'compat-ok\|compat-stale' _site-nodata/index.html
+
       - name: Check the language picker links the translated page
         run: |
           grep -q 'details class="langpicker"' _site/demo.html

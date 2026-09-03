@@ -33,6 +33,11 @@ $galette-light-grey:   #e5e5e5 !default;
 $galette-dark-grey:    #242424 !default;
 $galette-blue:         #007baa !default;
 $galette-dark-blue:    darken($galette-blue, 10%) !default;
+/* Compatibility verdict on a download. Measured against the cartouche's light
+   grey: 4.64:1 and 5.19:1, so the colour is legible rather than merely present.
+   It is never the only cue either — an icon carries the same distinction. */
+$galette-compat-ok:    #1c7430 !default;
+$galette-compat-stale: #b3261e !default;
 
 $text-color:        #606060 !default;
 $light-text-color:  #fff !default;
