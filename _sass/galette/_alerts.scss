@@ -46,7 +46,7 @@ section#content blockquote.admonition {
        of the include-based admonitions instead. */
     border-inline-start: 0;
     border-radius: 10px;
-    padding: 1em;
+    padding: 1em 1em 1em 2.5em;
     background: $galette-light-grey;
     color: #000;
 
@@ -58,6 +58,10 @@ section#content blockquote.admonition {
         /* Overrides the centring above, which belongs to the titled variant. */
         text-align: start;
         margin: 0;
+
+        &:first-child {
+            text-indent: -1.5em;
+        }
     }
 
     /* The bold word stands in for the title, icon included — the same images the
