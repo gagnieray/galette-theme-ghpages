@@ -37,7 +37,7 @@ Every line here cost a round trip on fullcard, oauth2 or auto.
 
 | # | Trap | Where it bites |
 |---|---|---|
-| 1 | GitHub issues are **disabled** on all six, so `tracker_url` is required and `/issues` must not be linked | every site |
+| 1 | GitHub issues are **disabled** on five of the six, so `tracker_url` is required and `/issues` must not be linked — but they are **enabled on activities**, which is where its bugs go | check `has_issues` per repository |
 | 2 | Adding front matter to `README.md` turns it into `README.html` and the site **loses its root** — GitHub Pages only renders it as the index while it has none | oauth2, reverted |
 | 3 | A version written into a page becomes a string every translator carries and re-bumps at each release | the two shields badges in each `.rst` |
 | 4 | A catalogue may have translated a **real path** — Tamil had translated the `plugins` directory name | review every generated translation |
@@ -428,12 +428,18 @@ Values read from each plugin, not inferred.
 | maps | `galette-plugin-maps` | 1.3.0 | yes + upgrade scripts | 4 | `galette-plugin-maps` | master |
 | events | `galette-plugin-events` | 1.3.0 | yes + upgrade scripts | 7 | **`evenements`** | master |
 | objectslend | `galette-plugin-objectslend` | 1.3.0 | yes, **no pgsql upgrades** | 4 | `galette-plugin-objectslend` | master |
-| activities | `galette-plugin-activities` | 1.3.0 | yes | 0 | **none** | **main** |
+| activities | `galette-plugin-activities` | 1.3.0 | yes | 0 | **GitHub issues** | **main** |
 
 Two tracker slugs are off convention and both answer 200: paypal's is truncated
 (`galette-plugin-paypa`) and events' is French (`evenements`). `activities` has no
-Redmine project at all — either create one or point `tracker_url` at the generic
-`https://bugs.galette.eu/projects/galette-plugins`.
+Redmine project at all, and needs none: it is the one repository with GitHub
+issues enabled, so its `tracker_url` is
+`https://github.com/galette-plugins/plugin-activities/issues`.
+
+It was also the one shipping its GPL-3 text as `LICENSE` where its six siblings
+ship `COPYING`, so the file every README badge and archive expects was missing.
+Check that per plugin rather than assuming: a licence a tool cannot find is a
+bug, not a detail.
 
 **All five need database tables**, unlike fullcard. Their `documentation.md`
 keeps its *Database initialisation* section.
