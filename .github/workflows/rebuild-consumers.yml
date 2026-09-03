@@ -16,11 +16,13 @@ on:
       - '_includes/**'
       - '_sass/**'
       - 'assets/**'
-  # The Regenerate i18n workflow commits _includes/ with GITHUB_TOKEN, and such a
-  # push starts no workflow — so the push trigger above never sees a translation
-  # update. Chaining off that run is what carries new strings to the sites.
+  # Regenerate i18n and Refresh the Galette version both commit _includes/ with
+  # GITHUB_TOKEN, and such a push starts no workflow — so the push trigger above
+  # never sees a translation update, nor a new Galette release. Chaining off
+  # those runs is what carries new strings, and a changed compatibility verdict,
+  # to the sites.
   workflow_run:
-    workflows: ['Regenerate i18n']
+    workflows: ['Regenerate i18n', 'Refresh the Galette version']
     types: [completed]
   workflow_dispatch:
     inputs:
