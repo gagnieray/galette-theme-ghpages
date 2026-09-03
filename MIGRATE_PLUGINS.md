@@ -204,6 +204,32 @@ Check that pairing before dispatching, though. A version declared without a tag
 gives a page announcing a release nobody can download, which is the state
 fullcard was in before its first Actions release.
 
+### Step 4b — the older releases, later
+
+Once a plugin is on the new organisation, its whole history can be republished as
+GitHub releases. The tarballs are already served:
+
+* recent versions: <https://galette.eu/download/plugins/>
+* everything before that: <https://galette.eu/download/archives/plugins/>
+
+Both are plain indexes of `galette-plugin-<name>-<version>.tar.bz2`, each with a
+detached `.asc` or `.sig` beside it — the signature GitHub's build attestation
+replaces for anything built by the action from now on.
+
+Three things to reconcile rather than assume, checked on events:
+
+* **the two sets differ.** It has nineteen annotated tags and eighteen published
+  archives: `1.3.1` was tagged and never published. A backfill has to decide what
+  to do with a tag that has no tarball, and with a tarball whose tag is missing.
+* **every archive is listed twice** in those indexes, so deduplicate before
+  counting — 240 links for 120 files.
+* **mark them explicitly as not the latest** (`gh release create --latest=false`),
+  or publishing an old version demotes the current one on the repository page and
+  in the theme's download box, which reads `releases/latest`.
+
+Rebuilding those archives from their tags is not the point — the published bytes
+are what users already have. Attach the file as it stands.
+
 ### Step 5 — the orphan `gh-pages` branch
 
 ```
