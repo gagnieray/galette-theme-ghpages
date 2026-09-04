@@ -39,12 +39,18 @@ dialog.lightbox {
     background: none;
     overflow: hidden;
 
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: auto 1fr auto;
-    align-items: center;
-    justify-items: center;
-    gap: .5em;
+    /* Only once open. A `display` set unconditionally would beat the browser's
+       own `dialog:not([open]) { display: none }` — author styles win over the
+       user-agent sheet whatever the specificity — and the closed viewer would
+       sit at the foot of the page, laid out and visible. */
+    &[open] {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto 1fr auto;
+        align-items: center;
+        justify-items: center;
+        gap: .5em;
+    }
 
     &::backdrop {
         background: rgba(15, 15, 17, 0.93);
