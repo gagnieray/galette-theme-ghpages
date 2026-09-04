@@ -33,6 +33,11 @@ dialog.lightbox {
     max-height: 100vh;
     width: 100vw;
     height: 100vh;
+    /* The horizontal swipe belongs to the viewer, not to the browser's back
+       gesture. Vertical panning and pinching stay with the browser: naming
+       pan-y alone would also take zooming away, which is the one thing a reader
+       opening a screenshot at full size might still want. */
+    touch-action: pan-y pinch-zoom;
     margin: 0;
     padding: 0;
     border: 0;
