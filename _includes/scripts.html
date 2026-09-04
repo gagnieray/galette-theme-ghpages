@@ -158,14 +158,24 @@
     function build() {
       dialog = document.createElement('dialog');
       dialog.className = 'lightbox';
+      /* Drawn, not typed. A text chevron is placed by its font's metrics, which
+         put it a whole button below the disc meant to hold it, and centring a
+         line box is not centring the ink inside it. An svg has the geometry the
+         button needs, and it is what the maintainer pill and the compatibility
+         verdict already use. */
+      function icon(path) {
+        return '<svg class="lightbox-icon" aria-hidden="true" viewBox="0 0 24 24"' +
+          ' fill="none" stroke="currentColor" stroke-width="2.4"' +
+          ' stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg>';
+      }
       dialog.innerHTML =
         '<div class="lightbox-bar">' +
           '<span class="lightbox-counter"></span>' +
-          '<button type="button" class="lightbox-close"></button>' +
+          '<button type="button" class="lightbox-close">' + icon('M6 6l12 12M18 6L6 18') + '</button>' +
         '</div>' +
-        '<button type="button" class="lightbox-prev"></button>' +
+        '<button type="button" class="lightbox-prev">' + icon('M15 5l-7 7 7 7') + '</button>' +
         '<img class="lightbox-view" alt="">' +
-        '<button type="button" class="lightbox-next"></button>' +
+        '<button type="button" class="lightbox-next">' + icon('M9 5l7 7-7 7') + '</button>' +
         '<p class="lightbox-caption"></p>';
       view = dialog.querySelector('.lightbox-view');
       caption = dialog.querySelector('.lightbox-caption');

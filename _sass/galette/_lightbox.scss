@@ -164,12 +164,26 @@ dialog.lightbox {
         border-radius: 50%;
     }
 
-    /* Drawn rather than pulled from an image file: three glyphs, no request, and
-       they follow the text colour. The line-height keeps each one centred in its
-       box, which its own metrics do not. */
-    .lightbox-close::before { content: '\00d7'; font-size: 2.2em; line-height: 1; }
-    .lightbox-prev::before  { content: '\2039'; font-size: 3.4em; line-height: .7; }
-    .lightbox-next::before  { content: '\203a'; font-size: 3.4em; line-height: .7; }
+    /* Sized in em, so an icon keeps its proportion inside the disc whatever the
+       button measures. Nothing here depends on a font being loaded, or on where
+       that font decides to sit a glyph. */
+    .lightbox-icon {
+        width: 1.7em;
+        height: 1.7em;
+        display: block;
+    }
+
+    .lightbox-close .lightbox-icon {
+        width: 1.4em;
+        height: 1.4em;
+    }
+
+    /* U+2039 and its pair were mirrored by the browser in a right-to-left page;
+       a path is not, so the arrows are turned over here instead. */
+    [dir="rtl"] & .lightbox-prev .lightbox-icon,
+    [dir="rtl"] & .lightbox-next .lightbox-icon {
+        transform: scaleX(-1);
+    }
 }
 
 /* On a narrow screen the arrows would eat the width the picture needs — two 48px
