@@ -124,24 +124,84 @@ dialog.lightbox {
         }
     }
 
+    /* Targets before glyphs. A chevron is a thin thing to aim at, and these are
+       the controls a reader uses most, so they get a square big enough for a
+       finger — 3.4em is 48px at the body size, past the 44px a touch target
+       wants — and a disc dark enough to stay findable over a pale screenshot. */
+    .lightbox-prev,
+    .lightbox-next {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.4em;
+        height: 3.4em;
+        padding: 0;
+        /* Off the viewport edge, where a disc flush against it reads as clipped. */
+        margin-inline: .6em;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.4);
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    /* The close button is in the bar, where nothing crowds it, so it stays
+       visually light — but it is aimed at with a thumb too, and gets the same
+       floor. */
+    .lightbox-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.2em;
+        height: 3.2em;
+        padding: 0;
+        border-radius: 50%;
+    }
+
     /* Drawn rather than pulled from an image file: three glyphs, no request, and
-       they follow the text colour. */
-    .lightbox-close::before { content: '\00d7'; font-size: 2em; }
-    .lightbox-prev::before  { content: '\2039'; font-size: 3em; }
-    .lightbox-next::before  { content: '\203a'; font-size: 3em; }
+       they follow the text colour. The line-height keeps each one centred in its
+       box, which its own metrics do not. */
+    .lightbox-close::before { content: '\00d7'; font-size: 2.2em; line-height: 1; }
+    .lightbox-prev::before  { content: '\2039'; font-size: 3.4em; line-height: .7; }
+    .lightbox-next::before  { content: '\203a'; font-size: 3.4em; line-height: .7; }
 }
 
+/* On a narrow screen the arrows would eat the width the picture needs — two 48px
+   squares out of 360 is a third of it — so they move on top of it instead, at
+   the edges where a thumb reaches. They keep their size: this is the one place
+   where the target matters most. */
 @media screen and (max-width: $galette-large) {
     dialog.lightbox {
-        gap: .2em;
+        &[open] {
+            grid-template-columns: 1fr;
+            gap: .2em;
+        }
+
+        .lightbox-bar,
+        .lightbox-caption {
+            grid-column: 1;
+        }
 
         .lightbox-view {
+            grid-column: 1;
             max-width: 100vw;
         }
 
-        .lightbox-prev::before,
-        .lightbox-next::before {
-            font-size: 2em;
+        .lightbox-prev,
+        .lightbox-next {
+            position: absolute;
+            top: 50%;
+            margin-inline: 0;
+            transform: translateY(-50%);
+        }
+
+        .lightbox-prev {
+            inset-inline-start: .4em;
+        }
+
+        .lightbox-next {
+            inset-inline-end: .4em;
         }
     }
 }
