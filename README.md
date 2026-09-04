@@ -248,6 +248,10 @@ echo 'class Object; def tainted?; false; end; def untaint; self; end; end' > /tm
 RUBYOPT="-r/tmp/untaint.rb" bundle exec jekyll build
 ```
 
+`jekyll serve` needs `--no-watch` on top of that:  the preview does not refresh
+itself — rebuild after an edit, since a stale preview is indistinguishable 
+from a change that did not take.
+
 Worth the detour, because a newer Jekyll is **not** a stand-in. It loads none of
 the plugins `github-pages` brings, and one of them rewrites what the pages
 contain: `jekyll-relative-links` turns `![alt](images/x.png)` into a

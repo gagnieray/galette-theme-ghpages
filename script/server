@@ -6,6 +6,12 @@
 # for the duration of the run is enough, and is far better than building with a
 # newer Jekyll — that one loads none of the plugins github-pages brings, and
 # jekyll-relative-links among them changes what the pages contain.
+#
+# And watching is broken here too, further down the same chain: pathutil 0.16.2
+# calls IO.read with a Hash where Ruby now wants an Integer, so the serve dies on
+# the first scan. Pass --no-watch (or --detach) and rebuild by hand after an
+# edit — a stale preview looks exactly like a change that did not work, which is
+# a good way to lose a review round.
 set -e
 
 shim="${TMPDIR:-/tmp}/jekyll-untaint.rb"
